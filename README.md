@@ -157,6 +157,23 @@ gulp.task('watchFmpp', function() {
 
 ### 最后直接运行gulp, 愉快的开发吧.
 
+### 我该如何使用呢
+
+可以直接拷贝本项目的`config.fmpp`, `gulpfile.js`, `package.json`, `.gitignore`到你的项目目录下, 运行`npm install`下载依赖模块, 然后修改gulpfile的路径配置:
+
+```js
+var PathConfig = {
+  ftlSrc: './src/index.ftl', // 模板文件
+  inlineDist: './template/', // 内联js, css后输出的目录
+  imageSrc: './img/',        // 图片目录
+  livereloadSrc: ['./js/*.js', './css/*.css', './dist/index.html'], // 需要监听改变的文件, 以便自动刷新
+  liveInlineSrc: ['./src/index.ftl', './js/*.js', './css/*css'], // 需要监听的文件, 以便自动进行内联资源操作
+  fmppSrc: ['./src/index.ftl', './mock/index.tdd'] // 需要监听的模板和mock数据文件, 以便自动进行fmpp.
+}
+```
+
+最后准备好一份mock数据, 命令行下输入gulp即可.
+
 ## 写在后面
 
-说点啥呢.
+本项目主要对像活动页这类比较简单的页面进行了轻量级的前后分离和构建, 由于gulp的方便性, 你也可以扩展自己需要的功能, 比如执行JSHint进行代码检查, 也可以去掉内联资源的工作, 使用gulp其他的插件进行资源的压缩合并. 总之任意配置达到自己的要求, 从繁杂的业务中抽离出来.
