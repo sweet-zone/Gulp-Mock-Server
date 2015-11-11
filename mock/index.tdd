@@ -4,6 +4,6 @@
 		gender: "male",
 		age: 24,
 		address: "Hangzhou",
-		type: 1
+		type: 3
 	}
 }

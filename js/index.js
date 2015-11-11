@@ -1,7 +1,7 @@
 (function() {
 
 	$('.btn').click(function() {
-		alert('click me!');
+		alert('click me and you are ok?');
 	})
 
 })();

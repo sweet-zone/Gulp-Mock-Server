@@ -7,17 +7,21 @@ var gulp = require('gulp'),
 	watch = require('gulp-watch'),
 	fs = require('fs'),
 	CleanCSS = require('clean-css'),
-	UglifyJS = require('uglify-js')
+	UglifyJS = require('uglify-js'),
+	exec = require('child_process').exec
 
 //需要配置项
-var path = {
-	srcFtl: './src/index.ftl',
-	inlineFtl: './template/',
-	imageSrc: './img/'
+var PathConfig = {
+	ftlSrc: './src/index.ftl',
+	inlineDist: './template/',
+	imageSrc: './img/',
+	livereloadSrc: ['./js/*.js', './css/*.css', './dist/index.html'],
+	liveInlineSrc: ['./src/index.ftl', './js/*.js', './css/*css'],
+	fmppSrc: ['./src/index.ftl', './mock/index.tdd']
 }
 
 gulp.task('inline', function() {
-	gulp.src(path.srcFtl)
+	gulp.src(PathConfig.ftlSrc)
 		.pipe(replace(/<link.+href="(.+\.css)".*>/g, function(s, filename) {
 			var style = fs.readFileSync(__dirname + filename, 'utf-8');
 			return '<style>\n' + new CleanCSS().minify(style).styles + '\n</style>';
@@ -25,7 +29,7 @@ gulp.task('inline', function() {
 		.pipe(replace(/<script.+src="(.+\.js)".*><\/script>/g, function(s, filename) {
 			return '<script>\n' + UglifyJS.minify(__dirname + filename).code + '\n</script>';
 		}))
-		.pipe(gulp.dest(path.inlineFtl));
+		.pipe(gulp.dest(PathConfig.inlineDist));
 })
 
 gulp.task('server', function() {
@@ -35,23 +39,31 @@ gulp.task('server', function() {
 })
 
 gulp.task('image', function() {
-	gulp.src(path.imageSrc + '*')
+	gulp.src(PathConfig.imageSrc + '*')
 		.pipe(imagemin({
 			progressive: true,
 			use: [pngquant()]
 		}))
-		.pipe(gulp.dest(path.imageSrc))
+		.pipe(gulp.dest(PathConfig.imageSrc))
 })
 
 gulp.task('livereload', function() {
-	gulp.src(['./js/*.js', './css/*.css', './dist/index.html'])
-		.pipe(watch(['./js/*.js', './css/*.css', './dist/index.html']))
+	gulp.src(PathConfig.livereloadSrc)
+		.pipe(watch(PathConfig.livereloadSrc))
 		.pipe(connect.reload())
 })
 
-gulp.task('watch', function() {
-	gulp.watch('./js/*.js', ['inline'])
-	gulp.watch('./css/*css', ['inline'])
+gulp.task('watchInline', function() {
+	gulp.watch(PathConfig.liveInlineSrc, ['inline']);
 })
 
-gulp.task('default', ['inline', 'server', 'livereload', 'watch'])
+gulp.task('watchFmpp', function() {
+	gulp.watch(PathConfig.fmppSrc, function() {
+		exec('fmpp', function(err) {
+			if(err) throw err;
+			else console.log('ftl to html successfully!')
+		})
+	})
+})
+
+gulp.task('default', ['inline', 'server', 'livereload', 'watchInline', 'watchFmpp'])
