@@ -5,6 +5,7 @@ var gulp = require('gulp'),
 	imagemin = require('gulp-imagemin'),
 	pngquant = require('imagemin-pngquant'),
 	watch = require('gulp-watch'),
+	jshint = require('gulp-jshint'),
 	fs = require('fs'),
 	CleanCSS = require('clean-css'),
 	UglifyJS = require('uglify-js'),
@@ -17,7 +18,8 @@ var PathConfig = {
 	imageSrc: './img/',
 	livereloadSrc: ['./js/*.js', './css/*.css', './dist/index.html'],
 	liveInlineSrc: ['./src/index.ftl', './js/*.js', './css/*css'],
-	fmppSrc: ['./src/index.ftl', './mock/index.tdd']
+	fmppSrc: ['./src/index.ftl', './mock/index.tdd'],
+	lintSrc: './js/*.js'
 }
 
 gulp.task('inline', function() {
@@ -64,6 +66,12 @@ gulp.task('watchFmpp', function() {
 			else console.log('ftl to html successfully!')
 		})
 	})
+})
+
+gulp.task('lint', function() {
+	gulp.src(PathConfig.lintSrc)
+		.pipe(jshint())
+		.pipe(jshint.reporter('default'))
 })
 
 gulp.task('default', ['inline', 'server', 'livereload', 'watchInline', 'watchFmpp'])
