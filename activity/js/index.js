@@ -6,7 +6,7 @@
 	}
 
 	$('.btn').click(function() {
-		alert('click me and you are ok?');
+		alert('click me?');
 	})
 
 })();
