@@ -1,0 +1,9 @@
+{
+	user: {
+		name: "zjzhome",
+		gender: "male",
+		age: 25,
+		address: "Hangzhou",
+		type: 2
+	}
+}
