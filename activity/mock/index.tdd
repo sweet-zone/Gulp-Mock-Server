@@ -1,9 +1,10 @@
 {
-	user: {
-		name: "zjzhome",
-		gender: "male",
-		age: 24,
-		address: "Hangzhou",
-		type: 2
+	"id": 1, 
+	"user": {
+		"name": "zjzhome",
+		"gender": "male",
+		"age": 27,
+		"address": "Hangzhou",
+		"type": 1
 	}
 }

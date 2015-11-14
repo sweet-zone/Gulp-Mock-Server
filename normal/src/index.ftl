@@ -10,7 +10,6 @@
     <meta charset="UTF-8">
     <meta name="format-detection" content="telephone=no">
     <meta name="format-detection" content="address=no">
-    <meta name="viewport" content="target-densitydpi=device-dpi,width=640,user-scalable=no" />
     <title>Rapid-Dev-Activity-Page</title>
     <link rel="stylesheet" type="text/css" href="/css/reset.css">
     <link rel="stylesheet" type="text/css" href="/css/index.css">
@@ -27,11 +26,13 @@
 
         <@tpl type=user.type />
 
-        <div><button type="button" class="btn">点我点我点我</button></div>
+        <div>
+            <button type="button" class="btn">点我点我点我</button>
+        </div>
     </div>
 
     <script src="/js/zepto.js"></script>
     <script src="/js/index.js"></script>
 </body> 
-</html>
 </#escape>
+</html>
