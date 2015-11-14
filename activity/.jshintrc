@@ -17,7 +17,7 @@
     "supernew"      : false,    // Array and Object constructors should not be used
     "evil"          : false,    // Code should not be dynamically injected and executed to prevent Eval Injection vulnerability
                                 // Collapsible "if" statements should be merged
-    "nocomma"       : true,     // Comma operator should not be used
+                                // Comma operator should not be used
     "nonew"         : false,    // Constructor functions should not be called purely for side-effects
     "debug"         : false,    // Debugger statements should not be used
                                 // Files should not have too many lines
@@ -46,7 +46,6 @@
     "undef"         : true,
     "unused"        : true, 
     "strict"        : false,
-    "es5"           : true,
     "globalstrict"  : false, 
 
     "browser"       : true,

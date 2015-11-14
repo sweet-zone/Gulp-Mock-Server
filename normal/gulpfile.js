@@ -12,6 +12,7 @@ var gulp = require('gulp'),
 	sourcemaps = require('gulp-sourcemaps'),
 	rev = require('gulp-rev'),
 	revCollector = require('gulp-rev-collector'),
+
 	jshint = require('gulp-jshint'),
 	exec = require('child_process').exec
 
@@ -24,8 +25,7 @@ var PathConfig = {
 	liveInlineSrc: ['./src/index.ftl', './js/*.js', './css/*css'],    // 自动改变模板监听文件/目录
 	fmppSrc: ['./src/index.ftl', './mock/index.tdd'],                 // 自动执行fmpp监听文件/目录
 	lintSrc: './js/*.js',       // jshint检查文件目录
-
-	// 合并压缩资源文件到指定目录, 配置下面的目录
+	
 	cssSrc: [],                 // 合并压缩CSS源文件, 根据ftlSrc自动识别
 	jsSrc: [],					// 合并压缩JS源文件, 根据ftlSrc自动识别
 	minCSS: 'index.min.css',    // 合并压缩后的CSS文件名
@@ -36,7 +36,7 @@ var PathConfig = {
 
 // 静态服务器
 // 并开启自动刷新
-gulp.task('server', function() {
+gulp.task('webserver', function() {
 	connect.server({
 		livereload: true
 	})
@@ -65,16 +65,16 @@ gulp.task('watchFmpp', function() {
 		exec('fmpp', function(err) {
 			if(err) throw err;
 			else console.log('ftl to html successfully!')
-		})
-	})
-})
+		});
+	});
+});
 
 // jshint静态代码检查
 gulp.task('lint', function() {
 	gulp.src(PathConfig.lintSrc)
 		.pipe(jshint())
-		.pipe(jshint.reporter('default'))
-})
+		.pipe(jshint.reporter('default'));
+});
 
 // 分析模板
 // 压缩资源到指定目录
@@ -91,12 +91,13 @@ gulp.task('extract', function() {
 			return s;
 		}))
 		.pipe(gulp.dest(PathConfig.inlineDist));
-})
+});
 
 gulp.task('cleanCSS', function() {
-	return gulp.src([PathConfig.compressDist + '*.css', PathConfig.compressDist + 'maps/*.min.css.map', PathConfig.compressDist + '*.css.json'], { read: false })
-			.pipe(clean())
-})
+	var p = PathConfig.compressDist
+	return gulp.src([p + '*.css', p + 'maps/*.min.css.map', p + '*.css.json'], { read: false })
+			.pipe(clean());
+});
 gulp.task('compressCSS', ['extract', 'cleanCSS'], function() {
 	return gulp.src(PathConfig.cssSrc)
 		.pipe(sourcemaps.init())
@@ -106,12 +107,13 @@ gulp.task('compressCSS', ['extract', 'cleanCSS'], function() {
 		.pipe(sourcemaps.write(PathConfig.mapDist))
 		.pipe(gulp.dest(PathConfig.compressDist))
 		.pipe(rev.manifest('manifest.css.json'))
-		.pipe(gulp.dest(PathConfig.compressDist))
-})
+		.pipe(gulp.dest(PathConfig.compressDist));
+});
 gulp.task('cleanJS', function() {
-	return gulp.src([PathConfig.compressDist + '*.js', PathConfig.compressDist + 'maps/*.min.js.map', PathConfig.compressDist + '*.js.json'], { read: false })
-			.pipe(clean())
-})
+	var p = PathConfig.compressDist
+	return gulp.src([p + '*.js', p + 'maps/*.min.js.map', p + '*.js.json'], { read: false })
+			.pipe(clean());
+});
 gulp.task('compressJS', ['extract', 'cleanJS'], function() {
 	return gulp.src(PathConfig.jsSrc)
 		.pipe(sourcemaps.init())
@@ -121,35 +123,33 @@ gulp.task('compressJS', ['extract', 'cleanJS'], function() {
 		.pipe(sourcemaps.write(PathConfig.mapDist))
 		.pipe(gulp.dest(PathConfig.compressDist))
 		.pipe(rev.manifest('manifest.js.json'))
-		.pipe(gulp.dest(PathConfig.compressDist))
-})
+		.pipe(gulp.dest(PathConfig.compressDist));
+});
 
 gulp.task('inline', ['compressJS', 'compressCSS'], function() {
+	var p = PathConfig.compressDist.replace('.', '');
 	return gulp.src(PathConfig.ftlSrc)
 		.pipe(replace(/(\s*<link.+href=".+\.css".*>\s*)+/g, function(s, filename) {
-			return '\n<link rel="stylesheet" type="text/css" href="' + PathConfig.compressDist + PathConfig.minCSS + '">\n';
+			return '\n<link rel="stylesheet" type="text/css" href="' + p + PathConfig.minCSS + '">\n';
 		}))
 		.pipe(replace(/(\s*<script.+src="(.+\.js)".*><\/script>\s*)+/g, function(s, filename) {
-			return '\n<script src="' + PathConfig.compressDist + PathConfig.minJS + '"></script>\n';
+			return '\n<script src="' + p + PathConfig.minJS + '"></script>\n';
 		}))
 		.pipe(gulp.dest(PathConfig.inlineDist));
-})
+});
 
 gulp.task('rev', ['inline'], function() {
 	gulp.src(['./pub/*.json', PathConfig.inlineDist + '*.ftl'])
 		.pipe(revCollector({
-			replaceReved: true,
-			dirReplacements: {
-				'./pub/': '/pub/',
-				'./pub/': '/pub/'
-			}
+			replaceReved: true
 		}))
-		.pipe(gulp.dest(PathConfig.inlineDist))
-})
+		.pipe(gulp.dest(PathConfig.inlineDist));
+});
 
 // 自动进行内联操作
 gulp.task('watchRev', function() {
 	gulp.watch(PathConfig.liveInlineSrc, ['rev']);
-})
+});
 
-gulp.task('default', ['rev', 'server', 'livereload', 'watchRev', 'watchFmpp'])
+gulp.task('default', ['rev', 'webserver', 'livereload', 'watchRev', 'watchFmpp']);
+gulp.task('server', ['webserver', 'livereload', 'watchFmpp'])

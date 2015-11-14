@@ -6,7 +6,7 @@ var gulp = require('gulp'),
 	pngquant = require('imagemin-pngquant'),
 	watch = require('gulp-watch'),
 
-	jshint = require('gulp-jshint'),
+	//jshint = require('gulp-jshint'),
 
 	fs = require('fs'),
 	CleanCSS = require('clean-css'),
@@ -20,8 +20,8 @@ var PathConfig = {
 	imageSrc: './img/',         // 图片目录
 	livereloadSrc: ['./js/index.js', './css/index.css', './dist/index.html'], // 自动刷新监听文件/目录
 	liveInlineSrc: ['./src/index.ftl', './js/*.js', './css/*css'],    // 自动内联监听文件/目录
-	fmppSrc: ['./src/index.ftl', './mock/index.tdd'],                 // 自动执行fmpp监听文件/目录
-	lintSrc: './js/*.js'        // jshint检查文件目录
+	fmppSrc: ['./src/index.ftl', './mock/index.tdd']                 // 自动执行fmpp监听文件/目录
+	//lintSrc: './js/*.js'        // jshint检查文件目录
 }
 
 // 模板内联js, css到指定文件
