@@ -5,9 +5,10 @@
 
 活动页大概有这么几个特点:
 - 大块切图, 一堆的图片, 需要压缩工作
-- 基本就一个js一个css, 顶多引入个zepto. 可以直接内联到模板
+- 基本就一个js一个css, 顶多引入个reset, zepto. 可以直接内联到模板.
 - 大多都是服务端直接吐数据
 - 前端写的很快, 但后端模板写好了, 如果后端没弄好环境就要干等着, 就算后端搞好了环境, 数据还没准备好依然没什么卵用.
+- 快速开发
 
 如果前端这里可以自己整个环境解析后端模板, 测试数据, 接着把图片压缩下, 把资源内联到模板, 实现一个轻量级的前后端分离, 接下来就是喝喝茶逗逗妹子等着和后端联调了.
 
@@ -54,12 +55,13 @@ data:tdd(../mock/index.tdd) // 数据文件
 上文的配置文件中data一项就是你准备的数据的文件, 以tdd后缀. 文件路径相对于outputRoot. 这里的数据就和你与后端约定的接口一致.
 ```js
 {
-    user: {
-        name: "zjzhome",
-        gender: "male",
-        age: 24,
-        address: "Hangzhou",
-        type: 1
+    "id": 1
+    "user": {
+        "name": "zjzhome",
+        "gender": "male",
+        "age": 24,
+        "address": "Hangzhou",
+        "type": 1
     }
 }
 ```
@@ -159,7 +161,7 @@ gulp.task('watchFmpp', function() {
 
 ### 我该如何使用呢
 
-可以直接拷贝本项目的`config.fmpp`, `gulpfile.js`, `package.json`, `.gitignore`到你的项目目录下, 运行`npm install`下载依赖模块, 然后修改gulpfile的路径配置:
+参照activity目录下, 可以直接拷贝本项目的`config.fmpp`, `gulpfile.js`, `package.json`, `.gitignore`到你的项目目录下, 运行`npm install`下载依赖模块, 然后修改gulpfile的路径配置:
 
 ```js
 var PathConfig = {
@@ -174,6 +176,103 @@ var PathConfig = {
 
 最后准备好一份mock数据, 命令行下输入gulp即可.
 
+## 继续...
+
+本来只是为活动页这类小页面定制的工作流, 后来发现有些页面比活动页大一些:)如果使用公司的那些大而全的工具又不值, 所以我就又写了一个针对比活动页大点的页面的工作流.(原谅我这拙劣的描述...)
+
+其实, 大部分像图片压缩, 服务器, 自动刷新都是类似的, 不过呢, 这时, js或者css文件可能多了一些, 就不再是直接内联到模板, 而是合并压缩并打上版本号然后替换模板中的引用. 这部分参照normal目录.
+
+### 提取css和js引用
+
+根据模板, 通过正则提取出引用的js和css, 为下一步合并压缩做准备.
+
+```js
+gulp.task('extract', function() {
+  return gulp.src(PathConfig.ftlSrc)
+    .pipe(replace(/<link.+href="(.+\.css)".*>/g, function(s, filename) {
+      PathConfig.cssSrc.push(__dirname + filename);
+      return s;
+    }))
+    .pipe(replace(/<script.+src="(.+\.js)".*><\/script>/g, function(s, filename) {
+      PathConfig.jsSrc.push(__dirname + filename);
+      return s;
+    }))
+    .pipe(gulp.dest(PathConfig.inlineDist));
+});
+```
+
+### 在合并压缩之前进行文件的清空工作.
+
+```js
+gulp.task('cleanCSS', function() {
+  var p = PathConfig.compressDist
+  return gulp.src([p + '*.css', p + 'maps/*.min.css.map', p + '*.css.json'], { read: false })
+      .pipe(clean());
+});
+gulp.task('cleanJS', function() {
+  var p = PathConfig.compressDist
+  return gulp.src([p + '*.js', p + 'maps/*.min.js.map', p + '*.js.json'], { read: false })
+      .pipe(clean());
+});
+```
+
+### 合并压缩打上版本号, 生成sourcemap和manifest文件.
+
+```js
+gulp.task('compressCSS', ['extract', 'cleanCSS'], function() {
+  return gulp.src(PathConfig.cssSrc)
+    .pipe(sourcemaps.init())
+    .pipe(concat(PathConfig.minCSS))
+    .pipe(minifyCSS())
+    .pipe(rev())
+    .pipe(sourcemaps.write(PathConfig.mapDist))
+    .pipe(gulp.dest(PathConfig.compressDist))
+    .pipe(rev.manifest('manifest.css.json'))
+    .pipe(gulp.dest(PathConfig.compressDist));
+});
+gulp.task('compressJS', ['extract', 'cleanJS'], function() {
+  return gulp.src(PathConfig.jsSrc)
+    .pipe(sourcemaps.init())
+    .pipe(concat(PathConfig.minJS))
+    .pipe(uglify())
+    .pipe(rev())
+    .pipe(sourcemaps.write(PathConfig.mapDist))
+    .pipe(gulp.dest(PathConfig.compressDist))
+    .pipe(rev.manifest('manifest.js.json'))
+    .pipe(gulp.dest(PathConfig.compressDist));
+});
+```
+
+### 更改模板的资源引用
+
+```js
+gulp.task('inline', ['compressJS', 'compressCSS'], function() {
+  var p = PathConfig.compressDist.replace('.', '');
+  return gulp.src(PathConfig.ftlSrc)
+    .pipe(replace(/(\s*<link.+href=".+\.css".*>\s*)+/g, function(s, filename) {
+      return '\n<link rel="stylesheet" type="text/css" href="' + p + PathConfig.minCSS + '">\n';
+    }))
+    .pipe(replace(/(\s*<script.+src="(.+\.js)".*><\/script>\s*)+/g, function(s, filename) {
+      return '\n<script src="' + p + PathConfig.minJS + '"></script>\n';
+    }))
+    .pipe(gulp.dest(PathConfig.inlineDist));
+});
+```
+
+### 将引用改为带版本号的引用
+
+```js
+gulp.task('rev', ['inline'], function() {
+  gulp.src(['./pub/*.json', PathConfig.inlineDist + '*.ftl'])
+    .pipe(revCollector({
+      replaceReved: true
+    }))
+    .pipe(gulp.dest(PathConfig.inlineDist));
+});
+```
+
+使用的时候, 依然和acticity一样, 配置变量, gulp即可. 
+
 ## 写在后面
 
-本项目主要对像活动页这类比较简单的页面进行了轻量级的前后分离和构建, 由于gulp的方便性, 你也可以扩展自己需要的功能, 比如执行JSHint进行代码检查, 也可以去掉内联资源的工作, 使用gulp其他的插件进行资源的压缩合并. 总之任意配置达到自己的要求, 从繁杂的业务中抽离出来.
+本项目主要对像活动页这类比较简单的页面进行了轻量级的前后分离和构建, 由于gulp的方便性, 你也可以扩展自己需要的功能, 比如执行JSHint进行代码检查,总之任意配置达到自己的要求, 从繁杂的业务中抽离出来.
