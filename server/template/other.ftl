@@ -1,8 +1,3 @@
-<#macro tpl type>
-    <div class="tip">
-        这是一段测试模板, <#if type==1>type为1</#if><#if type==2>type为2</#if><#if type==3>type为3</#if>
-    </div>
-</#macro>
 
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -23,8 +18,6 @@
             <li>年龄: ${user.age}</li>
             <li>地址: ${user.address}</li>
         </ul>
-
-        <@tpl type=user.type />
 
         <div>
             <button type="button" class="btn">点我点我点我</button>

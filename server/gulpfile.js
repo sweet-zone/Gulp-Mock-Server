@@ -1,6 +1,5 @@
 
 var gulp = require('gulp'),
-	clean = require('gulp-clean'),
 	connect = require('gulp-connect'),
 	watch = require('gulp-watch'),
 	exec = require('child_process').exec
@@ -28,12 +27,8 @@ gulp.task('livereload', function() {
 		.pipe(connect.reload())
 })
 
-gulp.task('clean', function() {
-	return gulp.src('./dist/index.html', { read: false, force: true })
-			.pipe(clean());
-});
 // 自动进行fmpp
-gulp.task('watchFmpp', ['clean'], function() {
+gulp.task('watchFmpp', function() {
 	gulp.watch(PathConfig.fmppSrc, function() {
 		exec('fmpp', function(err) {
 			if(err) throw err;
