@@ -27,7 +27,9 @@ build/Release
 node_modules
 activity/node_modules
 normal/node_modules
+server/node_modules
 
 # fmpp log
 activity/log.fmpp
 normal/log.fmpp
+server/log.fmpp

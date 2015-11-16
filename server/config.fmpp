@@ -1,5 +1,5 @@
-sourceRoot: src
-sources: /index.ftl
+sourceRoot: template
+sources: index.ftl
 outputRoot: dist
 logFile: log.fmpp
 modes: [execute(*.ftl)]
