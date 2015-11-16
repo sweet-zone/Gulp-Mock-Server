@@ -1,0 +1,13 @@
+{
+  "name": "school",
+  "version": "1.0.0",
+  "description": "only for test",
+  "author": "zjzhome",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-clean": "^0.3.1",
+    "gulp-connect": "^2.2.0",
+    "gulp-watch": "^4.3.5"
+  }
+}
