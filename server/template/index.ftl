@@ -29,6 +29,15 @@
         <div>
             <button type="button" class="btn">点我点我点我</button>
         </div>
+
+        <div>
+            <#list applicants as applicant>
+              ${applicant.name} (age: ${applicant.age})
+              <#list applicant.skills as skill>
+                - ${skill}
+              </#list>
+            </#list>
+        </div>
     </div>
 
     <script src="/js/zepto.js"></script>
