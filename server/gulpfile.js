@@ -2,14 +2,16 @@
 var gulp = require('gulp'),
 	connect = require('gulp-connect'),
 	watch = require('gulp-watch'),
+	mcss = require('gulp-mcs'),
 	exec = require('child_process').exec
 
 // 需要配置项
 var PathConfig = {
+	mcssSrc: './mcss/*.mcss',
 	ftlSrc: './src/index.ftl',  // Freemarker模板
 	inlineDist: './template/',     // 压缩js, css后更改引用后的模板的所在目录
 	livereloadSrc: ['./js/*.js', './css/*.css', './dist/index.html'], // 自动刷新监听文件/目录
-	fmppSrc: ['./src/index.ftl', './mock/index.tdd'],                 // 自动执行fmpp监听文件/目录
+	fmppSrc: ['./src/index.ftl', './mock/index.tdd']                  // 自动执行fmpp监听文件/目录
 }
 
 // 静态服务器
@@ -37,4 +39,15 @@ gulp.task('watchFmpp', function() {
 	});
 });
 
-gulp.task('default', ['webserver', 'livereload', 'watchFmpp'])
+// mcss to css
+gulp.task('mcss', function() {
+	gulp.src(PathConfig.mcssSrc)
+		.pipe(mcss())
+		.pipe(gulp.dest('./css/'))
+})
+
+gulp.task('watchMcss', function() {
+	gulp.watch(PathConfig.mcssSrc, ['mcss']);
+})
+
+gulp.task('default', ['mcss', 'webserver', 'livereload', 'watchFmpp', 'watchMcss']);
