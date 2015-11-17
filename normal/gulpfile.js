@@ -19,7 +19,7 @@ var gulp = require('gulp'),
 // 需要配置项
 var PathConfig = {
 	ftlSrc: './src/index.ftl',  // Freemarker模板
-	inlineDist: './template/',     // 压缩js, css后更改引用后的模板的所在目录
+	inlineDist: './template/',  // 压缩js, css后更改引用后的模板的所在目录
 	imageSrc: './img/',         // 图片目录
 	livereloadSrc: ['./js/*.js', './css/*.css', './dist/index.html'], // 自动刷新监听文件/目录
 	liveInlineSrc: ['./src/index.ftl', './js/*.js', './css/*css'],    // 自动改变模板监听文件/目录
@@ -152,4 +152,5 @@ gulp.task('watchRev', function() {
 });
 
 gulp.task('default', ['rev', 'webserver', 'livereload', 'watchRev', 'watchFmpp']);
-gulp.task('server', ['webserver', 'livereload', 'watchFmpp'])
+gulp.task('server', ['webserver', 'livereload', 'watchFmpp']);
+gulp.task('compress', ['rev', 'watchRev']);
