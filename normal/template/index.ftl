@@ -3,6 +3,7 @@
         这是一段测试模板, <#if type==1>type为1</#if><#if type==2>type为2</#if><#if type==3>type为3</#if>
     </div>
 </#macro>
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -10,7 +11,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="format-detection" content="address=no">
     <title>Rapid-Dev-Activity-Page</title>
-<link rel="stylesheet" type="text/css" href="/pub/index-bf6290f756.min.css">
+<link rel="stylesheet" type="text/css" href="/pub/index-3828ffbb58.min.css">
 </head>
 <#escape x as x?html>
 <body>

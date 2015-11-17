@@ -12,19 +12,18 @@ var gulp = require('gulp'),
 	sourcemaps = require('gulp-sourcemaps'),
 	rev = require('gulp-rev'),
 	revCollector = require('gulp-rev-collector'),
-
-	jshint = require('gulp-jshint'),
+	mcss = require('gulp-mcs'),
 	exec = require('child_process').exec
 
 // 需要配置项
 var PathConfig = {
+	mcssSrc: './mcss/*.mcss',
 	ftlSrc: './src/index.ftl',  // Freemarker模板
 	inlineDist: './template/',  // 压缩js, css后更改引用后的模板的所在目录
 	imageSrc: './img/',         // 图片目录
 	livereloadSrc: ['./js/*.js', './css/*.css', './dist/index.html'], // 自动刷新监听文件/目录
 	liveInlineSrc: ['./src/index.ftl', './js/*.js', './css/*css'],    // 自动改变模板监听文件/目录
 	fmppSrc: ['./src/index.ftl', './mock/index.tdd'],                 // 自动执行fmpp监听文件/目录
-	lintSrc: './js/*.js',       // jshint检查文件目录
 	
 	cssSrc: [],                 // 合并压缩CSS源文件, 根据ftlSrc自动识别
 	jsSrc: [],					// 合并压缩JS源文件, 根据ftlSrc自动识别
@@ -69,12 +68,16 @@ gulp.task('watchFmpp', function() {
 	});
 });
 
-// jshint静态代码检查
-gulp.task('lint', function() {
-	gulp.src(PathConfig.lintSrc)
-		.pipe(jshint())
-		.pipe(jshint.reporter('default'));
-});
+// mcss to css
+gulp.task('mcss', function() {
+	gulp.src(PathConfig.mcssSrc)
+		.pipe(mcss())
+		.pipe(gulp.dest('./css/'))
+})
+
+gulp.task('watchMcss', function() {
+	gulp.watch(PathConfig.mcssSrc, ['mcss']);
+})
 
 // 分析模板
 // 压缩资源到指定目录
@@ -152,5 +155,5 @@ gulp.task('watchRev', function() {
 });
 
 gulp.task('default', ['rev', 'webserver', 'livereload', 'watchRev', 'watchFmpp']);
-gulp.task('server', ['webserver', 'livereload', 'watchFmpp']);
+gulp.task('server', ['mcss', 'webserver', 'livereload', 'watchFmpp', 'watchMcss']);
 gulp.task('compress', ['rev', 'watchRev']);
