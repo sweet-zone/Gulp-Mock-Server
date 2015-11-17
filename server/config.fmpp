@@ -4,4 +4,4 @@ outputRoot: dist
 logFile: log.fmpp
 modes: [execute(*.ftl)]
 replaceExtensions:[ftl,html]
-data:tdd(../mock/index.tdd)
+data:{ tdd(../mock/index.tdd), applicants: json(../mock/foo.json) }

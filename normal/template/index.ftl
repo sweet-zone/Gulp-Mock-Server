@@ -11,7 +11,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="format-detection" content="address=no">
     <title>Rapid-Dev-Activity-Page</title>
-<link rel="stylesheet" type="text/css" href="/pub/index-bf6290f756.min.css">
+<link rel="stylesheet" type="text/css" href="/pub/index-3828ffbb58.min.css">
 </head>
 <#escape x as x?html>
 <body>
