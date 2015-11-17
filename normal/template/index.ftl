@@ -3,6 +3,7 @@
         这是一段测试模板, <#if type==1>type为1</#if><#if type==2>type为2</#if><#if type==3>type为3</#if>
     </div>
 </#macro>
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>

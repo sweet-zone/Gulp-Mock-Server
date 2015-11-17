@@ -1,9 +1,6 @@
 <#macro tpl type>
     <div class="tip">
-        这是一段测试模板, 
-        <#if type==1>type为1</#if>
-        <#if type==2>type为2</#if>
-        <#if type==3>type为3</#if>
+        这是一段测试模板, <#if type==1>type为1</#if><#if type==2>type为2</#if><#if type==3>type为3</#if>
     </div>
 </#macro>
 
@@ -21,7 +18,7 @@ body,html{min-height:100%;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100
 .app,.btn{text-align:center}.app{min-height:100%;position:relative;color:#aaa}.tip{margin:10px 20px;border:1px solid #ebebeb}.btn{display:inline-block;margin-top:20px;margin-bottom:10px;width:140px;height:40px;border:none;border-radius:6px;background:#F6870C;color:#fff;line-height:24px;font-size:16px;-webkit-appearance:none;outline:0}
 </style>
 </head>
-
+<#escape x as x?html>
 <body>
     <div class="app" id="app">
         <ul class="list">
@@ -45,5 +42,5 @@ var Zepto=function(){function t(t){return null==t?String(t):Y[J.call(t)]||"objec
 !function(){$(".btn").click(function(){alert("click me?")})}();
 </script>
 </body> 
-
+</#escape>
 </html>
