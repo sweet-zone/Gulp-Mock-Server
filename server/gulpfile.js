@@ -8,8 +8,7 @@ var gulp = require('gulp'),
 // 需要配置项
 var PathConfig = {
 	mcssSrc: './mcss/*.mcss',
-	ftlSrc: './src/index.ftl',  // Freemarker模板
-	inlineDist: './template/',     // 压缩js, css后更改引用后的模板的所在目录
+	cssDist: './css/',
 	livereloadSrc: ['./js/*.js', './css/*.css', './dist/index.html'], // 自动刷新监听文件/目录
 	fmppSrc: ['./src/index.ftl', './mock/index.tdd']                  // 自动执行fmpp监听文件/目录
 }
@@ -43,7 +42,7 @@ gulp.task('watchFmpp', function() {
 gulp.task('mcss', function() {
 	gulp.src(PathConfig.mcssSrc)
 		.pipe(mcss())
-		.pipe(gulp.dest('./css/'))
+		.pipe(gulp.dest(PathConfig.cssDist))
 })
 
 gulp.task('watchMcss', function() {
