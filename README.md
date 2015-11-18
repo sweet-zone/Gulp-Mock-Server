@@ -1,5 +1,9 @@
 # Rapid-Dev-Activity-Page
-使用Gulp, fmpp快速开发构建活动页
+使用Gulp, fmpp快速开发构建页面
+
+## 最前面
+
+最开始只是做活动页面时苦于效率太低制定了这样一套工作流, 其实项目不论大小都是需要这样的前后端分离的环境, 所以项目下你会看到三个文件下, acticity专为简单页面设计的, 图片压缩资源内联神马的. normal为普通页面设计, 资源文件较多不需要内联而是需要合并压缩替换引用的时候. server提供一个前端服务器的开发环境, 比如你的项目使用模块化, 需要使用特定的打包合并工具, 我的工作流就不再适用了.
 
 ## 写在前面
 
@@ -217,6 +221,7 @@ gulp.task('cleanJS', function() {
 ```
 
 ### 合并压缩打上版本号, 生成sourcemap和manifest文件.
+gulp管道风格的魅力.
 
 ```js
 gulp.task('compressCSS', ['extract', 'cleanCSS'], function() {
