@@ -7,8 +7,8 @@ var gulp = require('gulp'),
 
 // 需要配置项
 var PathConfig = {
-	mcssSrc: './mcss/*.mcss',                                         // mcss源目录
-	cssDist: './css/',                                                // css目录
+	mcssSrc: './mcss/*.mcss',
+	cssDist: './css/',
 	livereloadSrc: ['./js/*.js', './css/*.css', './dist/index.html'], // 自动刷新监听文件/目录
 	fmppSrc: ['./src/index.ftl', './mock/index.tdd']                  // 自动执行fmpp监听文件/目录
 }

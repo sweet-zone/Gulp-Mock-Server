@@ -5,13 +5,9 @@
   "author": "zjzhome",
   "license": "MIT",
   "devDependencies": {
-    "clean-css": "^3.4.6",
     "gulp": "^3.9.0",
     "gulp-connect": "^2.2.0",
-    "gulp-imagemin": "^2.4.0",
-    "gulp-replace": "^0.5.4",
-    "gulp-watch": "^4.3.5",
-    "imagemin-pngquant": "^4.2.0",
-    "uglify-js": "^2.5.0"
+    "gulp-mcs": "^0.1.1",
+    "gulp-watch": "^4.3.5"
   }
 }
