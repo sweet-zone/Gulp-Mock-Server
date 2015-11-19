@@ -7,8 +7,8 @@ var gulp = require('gulp'),
 
 // 需要配置项
 var PathConfig = {
-	mcssSrc: './mcss/*.mcss',                                         // mcss源目录
-	cssDist: './css/',                                                // css目录
+	mcssSrc: './mcss/*.mcss',
+	cssDist: './css/',
 	livereloadSrc: ['./js/*.js', './css/*.css', './dist/index.html'], // 自动刷新监听文件/目录
 	fmppSrc: ['./src/index.ftl', './mock/index.tdd']                  // 自动执行fmpp监听文件/目录
 }
@@ -17,7 +17,14 @@ var PathConfig = {
 // 并开启自动刷新
 gulp.task('webserver', function() {
 	connect.server({
-		livereload: true
+		port: 9000,
+		livereload: true,
+		middleware: function(connect, opt) {
+			var Proxy = require('gulp-connect-proxy');
+			opt.route = '/rest'; // localhost:9000/rest/hostname.com/xxx will be proxied, no http(s) prefix..
+			var proxy = new Proxy(opt);
+			return [proxy];
+		}
 	})
 })
 

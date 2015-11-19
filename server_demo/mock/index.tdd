@@ -3,8 +3,8 @@
 	"user": {
 		"name": "<p>zjzhome</p>",
 		"gender": "male",
-		"age": 24,
+		"age": 23,
 		"address": "Hangzhou",
-		"type": 2
+		"type": 3
 	}
 }

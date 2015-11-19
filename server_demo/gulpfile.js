@@ -17,7 +17,14 @@ var PathConfig = {
 // 并开启自动刷新
 gulp.task('webserver', function() {
 	connect.server({
-		livereload: true
+		port: 9000,
+		livereload: true,
+		middleware: function(connect, opt) {
+			var Proxy = require('gulp-connect-proxy');
+			opt.route = '/rest'; // localhost:9000/rest/hostname.com/xxx will be proxied, no http(s) prefix..
+			var proxy = new Proxy(opt);
+			return [proxy];
+		}
 	})
 })
 
