@@ -4,7 +4,6 @@ var gulp = require('gulp'),
 	replace = require('gulp-replace'),
 	connect = require('gulp-connect'),
 	imagemin = require('gulp-imagemin'),
-	pngquant = require('imagemin-pngquant'),
 	watch = require('gulp-watch'),
 	concat = require('gulp-concat'),
 	minifyCSS = require('gulp-minify-css'),
@@ -45,8 +44,7 @@ gulp.task('webserver', function() {
 gulp.task('image', function() {
 	gulp.src(PathConfig.imageSrc + '*')
 		.pipe(imagemin({
-			progressive: true,
-			use: [pngquant()]
+			progressive: true
 		}))
 		.pipe(gulp.dest(PathConfig.imageSrc))
 })
