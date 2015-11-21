@@ -10,7 +10,7 @@ var PathConfig = {
 	mcssSrc: './mcss/*.mcss',
 	cssDist: './css/',
 	livereloadSrc: ['./js/*.js', './css/*.css', './dist/index.html'], // 自动刷新监听文件/目录
-	fmppSrc: ['./src/index.ftl', './mock/index.tdd']                  // 自动执行fmpp监听文件/目录
+	fmppSrc: ['./src/index.ftl', './mock/index.tdd', './mock/foo.json']                  // 自动执行fmpp监听文件/目录
 }
 
 // 静态服务器
@@ -36,14 +36,15 @@ gulp.task('livereload', function() {
 })
 
 // 自动进行fmpp
+gulp.task('fmpp', function() {
+	exec('fmpp', function(err) {
+		if(err) throw err;
+		else console.log('ftl to html successfully!')
+	})
+})
 gulp.task('watchFmpp', function() {
-	gulp.watch(PathConfig.fmppSrc, function() {
-		exec('fmpp', function(err) {
-			if(err) throw err;
-			else console.log('ftl to html successfully!')
-		});
-	});
-});
+	gulp.watch(PathConfig.fmppSrc, ['fmpp']);
+})
 
 // mcss to css
 gulp.task('mcss', function() {
@@ -56,4 +57,4 @@ gulp.task('watchMcss', function() {
 	gulp.watch(PathConfig.mcssSrc, ['mcss']);
 })
 
-gulp.task('default', ['mcss', 'webserver', 'livereload', 'watchFmpp', 'watchMcss']);
+gulp.task('default', ['mcss', 'fmpp', 'webserver', 'livereload', 'watchFmpp', 'watchMcss']);

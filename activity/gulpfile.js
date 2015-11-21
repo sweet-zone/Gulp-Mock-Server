@@ -6,6 +6,8 @@ var gulp = require('gulp'),
 	pngquant = require('imagemin-pngquant'),
 	watch = require('gulp-watch'),
 
+	jshint = require('gulp-jshint'),
+
 	fs = require('fs'),
 	CleanCSS = require('clean-css'),
 	UglifyJS = require('uglify-js'),
@@ -18,7 +20,8 @@ var PathConfig = {
 	imageSrc: './img/',         // 图片目录
 	livereloadSrc: ['./js/index.js', './css/index.css', './dist/index.html'], // 自动刷新监听文件/目录
 	liveInlineSrc: ['./src/index.ftl', './js/*.js', './css/*css'],    // 自动内联监听文件/目录
-	fmppSrc: ['./src/index.ftl', './mock/index.tdd']                 // 自动执行fmpp监听文件/目录
+	fmppSrc: ['./src/index.ftl', './mock/index.json'],                 // 自动执行fmpp监听文件/目录
+	lintSrc: './js/*.js'        // jshint检查文件目录
 }
 
 // 模板内联js, css到指定文件
@@ -66,14 +69,24 @@ gulp.task('watchInline', function() {
 })
 
 // 自动进行fmpp
-gulp.task('watchFmpp', function() {
-	gulp.watch(PathConfig.fmppSrc, function() {
-		exec('fmpp', function(err) {
-			if(err) throw err;
-			else console.log('ftl to html successfully!')
-		})
+
+gulp.task('fmpp', function() {
+	exec('fmpp', function(err) {
+		if(err) throw err;
+		else console.log('ftl to html successfully!')
 	})
 })
 
-gulp.task('default', ['inline', 'server', 'livereload', 'watchInline', 'watchFmpp'])
+gulp.task('watchFmpp', function() {
+	gulp.watch(PathConfig.fmppSrc, ['fmpp']);
+})
+
+// jshint静态代码检查
+gulp.task('lint', function() {
+	gulp.src(PathConfig.lintSrc)
+		.pipe(jshint())
+		.pipe(jshint.reporter('default'))
+})
+
+gulp.task('default', ['fmpp', 'inline', 'server', 'livereload', 'watchInline', 'watchFmpp'])
 

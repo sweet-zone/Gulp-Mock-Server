@@ -1,7 +1,7 @@
 sourceRoot: src
-sources: index.ftl
+sources: /index.ftl
 outputRoot: dist
 logFile: log.fmpp
 modes: [execute(*.ftl)]
 replaceExtensions:[ftl,html]
-data:tdd(../mock/index.tdd)
+data:{ user: json(../mock/index.json) }

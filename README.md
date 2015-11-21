@@ -1,283 +1,85 @@
 # Rapid-Dev-Activity-Page
-使用Gulp, FMPP快速开发构建页面
-
-## 最前面
-
-最开始只是做活动页面时苦于效率太低制定了这样一套工作流, 其实项目不论大小都是需要这样的前后端分离的环境, 所以项目下你会看到三个文件下, acticity专为简单页面设计的, 图片压缩资源内联神马的. normal为普通页面设计, 资源文件较多不需要内联而是需要合并压缩替换引用的时候. server提供一个前端服务器的开发环境, 比如你的项目使用模块化, 需要使用特定的打包合并工具, 我的工作流就不再适用了.
+使用FMPP和Gulp快速构建前后端分离的自动化开发环境
 
 ## 写在前面
 
-活动页大概有这么几个特点:
-- 大块切图, 一堆的图片, 需要压缩工作
-- 基本就一个js一个css, 顶多引入个reset, zepto. 可以直接内联到模板.
-- 大多都是服务端直接吐数据
-- 前端写的很快, 但后端模板写好了, 如果后端没弄好环境就要干等着, 就算后端搞好了环境, 数据还没准备好依然没什么卵用.
-- 快速开发
+最开始只是在做活动页面时苦于效率太低制定了这样一个自动化的工作环境, 所以项目名是Rapid-Dev-Activity-Page(快速开发活动页...).
 
-如果前端这里可以自己整个环境解析后端模板, 测试数据, 接着把图片压缩下, 把资源内联到模板, 实现一个轻量级的前后端分离, 接下来就是喝喝茶逗逗妹子等着和后端联调了.
+活动页这类比较简单的页面有几个特点:
+- 一刀切图, 图片自然需要压缩
+- 资源(js, css)较少, 可以直接内联到模板或者直接合并压缩成一个文件.
+- 大多都是服务端直接吐数据, 前端编写模板, 服务端渲染输出.
+- 前端强依赖后端的数据和环境.
+- 开发测试时间短, 快速开发.
 
-本文就是为了让你悠然的喝茶品咖啡逗妹子而生的!
+其实时间短对于活动页来说并不是问题, 对于这样的页面, 一刀切, 静态页面分分钟写好, 可以写好后如何调试呢. 比如我们需要根据用户手机号的运营商来输出不同的内容, 这时候难道要不停的改变HTML结构来判断输出么. 直接写成Freemarker模板, 可是我们又没有后端提供的数据和环境, 只能干等..这时候如果有这样的一套环境:
+- 根据mock数据和我们编写的模板输出html文件.
+- 开启静态服务器调试
+- 大图的压缩
+- 当测试设备过多时, 在文件改动时能够自动刷新以方便查看页面.
+这样, 我们就可以不必依赖后端的环境和数据, 在约定接口后各自开发, 直到联调. 除非有接口变动, 基本不会出错. bug率大大降低. 可以腾出更多的时间和大家交(shui)流(qun)技(dou)术(meizi).
 
-## 项目目录
+## 项目目录说明
 
-对于一个Java Web项目, 一般前端工程师需要关注的就是webapp目录, 目录结构大概如下:
+本项目主要包含了三类页面的工作流程, 分别对应三个文件夹:
+
+* **activity**, 为极简的活动页定制, 编译FTL, 资源内联, 开启静态服务器, 自动刷新等等. 示例在acticity_demo下.
+* ***normal*, 对于资源稍微多一些的页面可能资源缓存更合理, 不再内联, 而是合并压缩更改引用. 示例在normal_demo下. 如果你的页面使用了模块化, 这个方案就不再适用, 推荐第三种.
+* **server**, 抽取了其中的FTL编译, 静态服务器, MCSS编译为CSS, 自动刷新的部分, 对于资源的打包工作交给你所使用的模块工具.(nej-build, r.js等等..)
+
+## 我该如何使用
+
+### 先介绍一下FMPP
+[FMPP - FreeMarker-based file PreProcessor](http://fmpp.sourceforge.net/), 基于Freemarker的文件预处理器, 就像我们用的CSS预处理器一样. 通过他拜托后端环境的束缚. 总的来说: HTML = FTL + DATA. FMPP就是通过数据和模板生成html文件, 和后端渲染输出是一个道理.
+
+使用也很简单(如果不考虑那一堆的配置项)
+* 准备的你的模板文件
+* 准备配置文件**config.fmpp**, 虽然可以命令行带参数, 但谁也不想那么费劲.
 
 ```
-webapp
-  css
-  js
-  img
-  template
-  ...
+sourceRoot: src                 // ftl目录
+sources: index.ftl              // 需要编译为html的文件, 如果没有此项配置, 那么sourceRoot下的所有ftl都将被编译
+outputRoot: dist                // 输出目录
+logFile: log.fmpp               // 日志打印目录, 可查看出错信息
+modes: [execute(*.ftl)]         // 对sourceRoot下的ftl文件进行操作
+replaceExtensions:[ftl,html]    // 编译后后缀改为html
+data:tdd(../mock/index.tdd)     // 数据文件, 路径相对于sourceRoot
 ```
 
-后端一般会将这个目录指向网站根路径, 比如要访问: /webapp/js/index.js, 就是访问这个地址: http://yourpath/js/index.js. 我们一般写link或者script标签的时候, 也会直接写绝对路径, 比如: `<link rel="stylesheet" type="text/css" href="/css/index.css">`
-下文所提到的项目根目录都是指webapp.
-
-## Freemarker模板解析
-
-这应该是最头疼问题了, 一般我们只能依赖后端的环境和数据进行调试, 还好总会有些工具帮我们解决这些问题.
-
-Freemarker模板的解析使用了[fmpp, 全称: freemarker preprocessor](http://fmpp.sourceforge.net/), 一个Freemarker的预处理器. 我们安装了fmpp之后, 就可以自己mock数据然后将ftl文件渲染为html文件. 
-
-fmpp的使用也很简单:
-
-#### 首先安装fmpp.
-[下载](http://fmpp.sourceforge.net/#sect4)到任意目录, 将bin目录添加到环境变量即可, 就可以使用fmpp命令了, 前提你要安装JDK. 然后windows下可能需要以管理员的身份运行CMD.
-
-#### 准备配置文件, `config.fmpp`, 根目录下即可.
-```
-sourceRoot: src   // ftl目录
-outputRoot: dist  // html输出目录
-logFile: log.fmpp // 日志文件
-modes: [execute(*.ftl)] // 对ftl后缀的文件操作
-replaceExtensions:[ftl,html] // 将后缀替换为html
-data:tdd(../mock/index.tdd) // 数据文件
-```
-
-#### 准备mock数据
-上文的配置文件中data一项就是你准备的数据的文件, 以tdd后缀. 文件路径相对于outputRoot. 这里的数据就和你与后端约定的接口一致.
-```js
+* 准备数据文件
+也就是配置文件中最后一项data, 我们看到上文中数据以tdd包裹, 这应该是FMPP自己的一种格式, 当然也可以使用json, 就是类似这样: `data: { user: json(../mock/index.json') }`. 两者类似但又有点不同. 比如两者同样是下面的数据:
+```json
 {
-    "id": 1
-    "user": {
-        "name": "zjzhome",
-        "gender": "male",
-        "age": 24,
-        "address": "Hangzhou",
-        "type": 1
-    }
+  "id": 1
 }
 ```
+如果是tdd的, id可以直接在模板中用${id}中获得, 但是如果json格式, fmpp会报错, 提示hash没有key, 所以就需要像`data: { user: json(../mock/index.json') }`使用, 在页面中${user.id}使用, 在activity和normal两个demo里可以看到不同的数据格式.
 
-#### 运行fmpp命令即可. 
-还有一大堆的配置项, 具体可看[官网文档](http://fmpp.sourceforge.net/manual.html)
+更多配置参考官网: [http://fmpp.sourceforge.net/manual.html](http://fmpp.sourceforge.net/manual.html)
 
-## Gulp登场
+### How I Use
 
-接下来的工作, 包括图片压缩, 内联压缩JS和CSS, 开启服务器, 自动刷新, 自动监听文件变化执行fmpp, 这些工作统统交给Gulp.
+* 根据自己的项目页面, 选择activity, normal或者server, 将文件夹下的`package.json`, `gulpfile.js`以及`config.fmpp`, 根据自己的项目做修改.
 
-### 图片压缩: gulp-imagemin和imagemin-pngquant.
-
-```js
-gulp.task('image', function() {
-  gulp.src(PathConfig.imageSrc + '*')
-    .pipe(imagemin({
-      progressive: true,
-      use: [pngquant()]
-    }))
-    .pipe(gulp.dest(PathConfig.imageSrc))
-})
+比如gulpfile.js下, 你需要修改的是各个task对应的目录.
 ```
-
-推荐一个在线压缩的网站[http://www.atool.org/pngcompression.php](http://www.atool.org/pngcompression.php).
-
-### 开启服务器: gulp-connect
-
-```js
-gulp.task('server', function() {
-  connect.server({
-    livereload: true
-  })
-})
-```
-
-并且开启livereload. 接下来我们要告诉connect什么时候reload. 访问localhost:8080即可.
-
-### 自动刷新: gulp-watch
-
-当PathConfig.livereloadSrc里的文件变化时, 就自动刷新. 一般情况是你的html, js或者css改变了.
-
-```js
-gulp.task('livereload', function() {
-  gulp.src(PathConfig.livereloadSrc)
-    .pipe(watch(PathConfig.livereloadSrc))
-    .pipe(connect.reload())
-})
-```
-
-### 内联JS和CSS: gulp-replace
-
-找了一堆插件, 貌似都不识别ftl文件, 有个gulp-inline不错, 内联资源后还自带压缩神马的, 但是会改变ftl的结构.. 索性自己写了.
-
-```js
-gulp.task('inline', function() {
-  gulp.src(PathConfig.ftlSrc)
-    .pipe(replace(/<link.+href="(.+\.css)".*>/g, function(s, filename) {
-      var style = fs.readFileSync(__dirname + filename, 'utf-8');
-      return '<style>\n' + new CleanCSS().minify(style).styles + '\n</style>';
-    }))
-    .pipe(replace(/<script.+src="(.+\.js)".*><\/script>/g, function(s, filename) {
-      return '<script>\n' + UglifyJS.minify(__dirname + filename).code + '\n</script>';
-    }))
-    .pipe(gulp.dest(PathConfig.inlineDist));
-})
-```
-
-使用gulp-replace先将link和script标签里的资源链接提取出来, 然后用文件内容替换掉, 为了同时压缩文件, 使用clean-css和uglify2.
-
-然后我们同样需要文件改变时, 自动完成内联工作.
-
-```js
-gulp.task('watchInline', function() {
-  gulp.watch(PathConfig.liveInlineSrc, ['inline']);
-})
-```
-
-### 自动编译ftl至html
-
-当ftl或者数据文件改变时, 依然需要自动完成编译.
-
-```js
-gulp.task('watchFmpp', function() {
-  gulp.watch(PathConfig.fmppSrc, function() {
-    exec('fmpp', function(err) {
-      if(err) throw err;
-      else console.log('ftl to html successfully!')
-    })
-  })
-})
-```
-
-这里使用Node的child_process模块, 可以直接执行命令.
-
-### 最后直接运行gulp, 愉快的开发吧.
-
-### 我该如何使用呢
-
-参照activity目录下, 可以直接拷贝本项目的`config.fmpp`, `gulpfile.js`, `package.json`, `.gitignore`到你的项目目录下, 运行`npm install`下载依赖模块, 然后修改gulpfile的路径配置:
-
-```js
 var PathConfig = {
-  ftlSrc: './src/index.ftl', // 模板文件
-  inlineDist: './template/', // 内联js, css后输出的目录
-  imageSrc: './img/',        // 图片目录
-  livereloadSrc: ['./js/*.js', './css/*.css', './dist/index.html'], // 需要监听改变的文件, 以便自动刷新
-  liveInlineSrc: ['./src/index.ftl', './js/*.js', './css/*css'], // 需要监听的文件, 以便自动进行内联资源操作
-  fmppSrc: ['./src/index.ftl', './mock/index.tdd'] // 需要监听的模板和mock数据文件, 以便自动进行fmpp.
+  ftlSrc: './src/index.ftl',  // Freemarker模板
+  inlineDist: './template/',  // 内联js, css后生成的模板的所在目录
+  imageSrc: './img/',         // 图片目录
+  livereloadSrc: ['./js/index.js', './css/index.css', './dist/index.html'], // 自动刷新监听文件/目录
+  liveInlineSrc: ['./src/index.ftl', './js/*.js', './css/*css'],    // 自动内联监听文件/目录
+  fmppSrc: ['./src/index.ftl', './mock/index.json'],                 // 自动执行fmpp监听文件/目录
+  lintSrc: './js/*.js'        // jshint检查文件目录
 }
 ```
 
-最后准备好一份mock数据, 命令行下输入gulp即可.
+这里有一些建议, 以为gulp是资瓷通配符的, 所以强烈建议统一功能或页面的模板或者资源有自己的文件夹, 然后配置里都用通配符识别即可, 比如`ftlSrc: './src/*ftl'`, 同时, 对于activity和normal中, 因为最后template中的模板是经过资源内联或者引用替换的, 强烈建议建立一个类似src的目录开发. 而server下则不用关心.
 
-## 继续...
-
-本来只是为活动页这类小页面定制的工作流, 后来发现有些页面比活动页大一些:)如果使用公司的那些大而全的工具又不值, 所以我就又写了一个针对比活动页大点的页面的工作流.(原谅我这拙劣的描述...)
-
-其实, 大部分像图片压缩, 服务器, 自动刷新都是类似的, 不过呢, 这时, js或者css文件可能多了一些, 就不再是直接内联到模板, 而是合并压缩并打上版本号然后替换模板中的引用. 这部分参照normal目录.
-
-### 提取css和js引用
-
-根据模板, 通过正则提取出引用的js和css, 为下一步合并压缩做准备.
-
-```js
-gulp.task('extract', function() {
-  return gulp.src(PathConfig.ftlSrc)
-    .pipe(replace(/<link.+href="(.+\.css)".*>/g, function(s, filename) {
-      PathConfig.cssSrc.push(__dirname + filename);
-      return s;
-    }))
-    .pipe(replace(/<script.+src="(.+\.js)".*><\/script>/g, function(s, filename) {
-      PathConfig.jsSrc.push(__dirname + filename);
-      return s;
-    }))
-    .pipe(gulp.dest(PathConfig.inlineDist));
-});
-```
-
-### 在合并压缩之前进行文件的清空工作.
-
-```js
-gulp.task('cleanCSS', function() {
-  var p = PathConfig.compressDist
-  return gulp.src([p + '*.css', p + 'maps/*.min.css.map', p + '*.css.json'], { read: false })
-      .pipe(clean());
-});
-gulp.task('cleanJS', function() {
-  var p = PathConfig.compressDist
-  return gulp.src([p + '*.js', p + 'maps/*.min.js.map', p + '*.js.json'], { read: false })
-      .pipe(clean());
-});
-```
-
-### 合并压缩打上版本号, 生成sourcemap和manifest文件.
-gulp管道风格的魅力.
-
-```js
-gulp.task('compressCSS', ['extract', 'cleanCSS'], function() {
-  return gulp.src(PathConfig.cssSrc)
-    .pipe(sourcemaps.init())
-    .pipe(concat(PathConfig.minCSS))
-    .pipe(minifyCSS())
-    .pipe(rev())
-    .pipe(sourcemaps.write(PathConfig.mapDist))
-    .pipe(gulp.dest(PathConfig.compressDist))
-    .pipe(rev.manifest('manifest.css.json'))
-    .pipe(gulp.dest(PathConfig.compressDist));
-});
-gulp.task('compressJS', ['extract', 'cleanJS'], function() {
-  return gulp.src(PathConfig.jsSrc)
-    .pipe(sourcemaps.init())
-    .pipe(concat(PathConfig.minJS))
-    .pipe(uglify())
-    .pipe(rev())
-    .pipe(sourcemaps.write(PathConfig.mapDist))
-    .pipe(gulp.dest(PathConfig.compressDist))
-    .pipe(rev.manifest('manifest.js.json'))
-    .pipe(gulp.dest(PathConfig.compressDist));
-});
-```
-
-### 更改模板的资源引用
-
-```js
-gulp.task('inline', ['compressJS', 'compressCSS'], function() {
-  var p = PathConfig.compressDist.replace('.', '');
-  return gulp.src(PathConfig.ftlSrc)
-    .pipe(replace(/(\s*<link.+href=".+\.css".*>\s*)+/g, function(s, filename) {
-      return '\n<link rel="stylesheet" type="text/css" href="' + p + PathConfig.minCSS + '">\n';
-    }))
-    .pipe(replace(/(\s*<script.+src="(.+\.js)".*><\/script>\s*)+/g, function(s, filename) {
-      return '\n<script src="' + p + PathConfig.minJS + '"></script>\n';
-    }))
-    .pipe(gulp.dest(PathConfig.inlineDist));
-});
-```
-
-### 将引用改为带版本号的引用
-
-```js
-gulp.task('rev', ['inline'], function() {
-  gulp.src(['./pub/*.json', PathConfig.inlineDist + '*.ftl'])
-    .pipe(revCollector({
-      replaceReved: true
-    }))
-    .pipe(gulp.dest(PathConfig.inlineDist));
-});
-```
-
-使用的时候, 依然和acticity一样, 配置变量, gulp即可. 
+* 根据约定的接口准备mock数据即可
+* 命令行下gulp或者gulp+task运行即可.
 
 ## 写在后面
 
-本项目主要对像活动页这类比较简单的页面进行了轻量级的前后分离和构建, 由于gulp的方便性, 你也可以扩展自己需要的功能, 比如执行JSHint进行代码检查,总之任意配置达到自己的要求, 从繁杂的业务中抽离出来.
+本项目主要对活动页这类比较简单的页面进行了轻量级的前后分离和构建, 由于gulp的方便性, 你也可以扩展自己需要的功能, 比如执行JSHint进行代码检查,总之任意配置达到自己的要求, 从繁杂的业务中抽离出来.
+如果对于其中的代码和插件感兴趣, 可直接查看直接源文件或者看[之前的这一篇](https://github.com/zjzhome/Rapid-Dev-Activity-Page/blob/master/doc.md).
