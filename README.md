@@ -1,5 +1,5 @@
 # Rapid-Dev-Activity-Page
-使用Gulp, fmpp快速开发构建页面
+使用Gulp, FMPP快速开发构建页面
 
 ## 最前面
 

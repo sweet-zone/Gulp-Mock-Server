@@ -11,7 +11,7 @@
     "name": "José Test",
     "maidenName": null,
     "age": 30,
-    "skills": [ "Ruby", "C++", "Cuda" ],
+    "skills": [ "Ruby", "C++", "JS" ],
     "testResults": { "a": 20, "b": 30, "c": 40 },
     "decided": false
   }
