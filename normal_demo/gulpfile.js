@@ -57,14 +57,13 @@ gulp.task('livereload', function() {
 })
 
 // 自动进行fmpp
-
 gulp.task('fmpp', function() {
-	exec('fmpp', function(err) {
-		if(err) throw err;
-		else console.log('ftl to html successfully!')
+	exec('fmpp', function(err, stdout, stderr) {
+		if(stdout) console.log(stdout);
+		if(stderr) console.log(stderr);
+		if(err) console.log('exec error: ', err);
 	})
 })
-
 gulp.task('watchFmpp', function() {
 	gulp.watch(PathConfig.fmppSrc, ['fmpp']);
 })

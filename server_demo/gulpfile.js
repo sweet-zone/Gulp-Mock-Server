@@ -10,7 +10,7 @@ var PathConfig = {
 	mcssSrc: './mcss/*.mcss',
 	cssDist: './css/',
 	livereloadSrc: ['./js/*.js', './css/*.css', './dist/index.html'], // 自动刷新监听文件/目录
-	fmppSrc: ['./src/index.ftl', './mock/index.tdd', './mock/foo.json']                  // 自动执行fmpp监听文件/目录
+	fmppSrc: ['./template/index.ftl', './mock/index.tdd', './mock/foo.json']                  // 自动执行fmpp监听文件/目录
 }
 
 // 静态服务器
@@ -37,9 +37,10 @@ gulp.task('livereload', function() {
 
 // 自动进行fmpp
 gulp.task('fmpp', function() {
-	exec('fmpp', function(err) {
-		if(err) throw err;
-		else console.log('ftl to html successfully!')
+	exec('fmpp', function(err, stdout, stderr) {
+		if(stdout) console.log(stdout);
+		if(stderr) console.log(stderr);
+		if(err) console.log('exec error: ', err);
 	})
 })
 gulp.task('watchFmpp', function() {
