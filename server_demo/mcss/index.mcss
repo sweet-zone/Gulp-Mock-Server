@@ -13,7 +13,7 @@
         display: inline-block;
         margin-top: 20px;
         margin-bottom: 20px;
-        width: 180px;
+        width: 140px;
         height: 40px;
         border: none;
         border-radius: 6px;

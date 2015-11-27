@@ -1,18 +1,26 @@
 
-var gulp = require('gulp'),
-    connect = require('gulp-connect'),
-    watch = require('gulp-watch'),
-    mcss = require('gulp-mcs'),
-    exec = require('child_process').exec,
-    lr = require('tiny-lr')()
+var gulp = require('gulp');
+var connect = require('gulp-connect');
+var watch = require('gulp-watch');
+var mcss = require('gulp-mcs');
+var exec = require('child_process').exec;
+var lr = require('tiny-lr')();
+
+var express = require('express');
+var app = express();
 
 // 需要配置项
 var PathConfig = {
     mcssSrc: './mcss/*.mcss',
     cssDist: './css/',
     livereloadSrc: ['./js/*.js', './css/*.css', './dist/index.html'], // 自动刷新监听文件/目录
-    fmppSrc: ['./template/index.ftl', './mock/index.tdd', './mock/foo.json']                  // 自动执行fmpp监听文件/目录
+    fmppSrc: ['./template/index.ftl', './mock/index.tdd', './mock/foo.json'],                  // 自动执行fmpp监听文件/目录
 }
+
+var EXPRESS_ROOT = __dirname;
+var EXPRESS_PORT = 8000;
+var APICONFIG = './async.api.js';
+var LIVEPORT = 35729;
 
 // 静态服务器
 // 并开启自动刷新
@@ -38,28 +46,33 @@ gulp.task('livereload:connect', function() {
 
 // express服务器
 function startExpress() {
-    var express = require('express');
-    var app = express();
+    var bodyParser = require('body-parser');
     app.use(require('connect-livereload')());
-    app.use(express.static(__dirname));
+    app.use(express.static(EXPRESS_ROOT));
+    app.use(bodyParser.json()); // for parsing application/json
+    app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
-    app.get('/rest/hh', function(req, res) {
-        res.json({"hello":"ws"})
-    });
+   var apis = require(APICONFIG);
+   for(var key in apis) {
+       var method = key.split(/\s+/)[0],
+           url = key.split(/\s+/)[1];
 
-    var server = app.listen(8000, function() {
+       app[method](url, apis[key]);
+   }
+
+    var server = app.listen(EXPRESS_PORT, function() {
         var host = server.address().address;
         var port = server.address().port;
         console.log('async server listening at http://%s:%s', host, port)
     });
 }
 function startLivereload() {
-    lr.listen(35729, function() {
-        console.log('livereload listen at port 35729');
+    lr.listen(LIVEPORT, function() {
+        console.log('livereload listen at port ' + LIVEPORT);
     });
 }
 function notifyLivereload(event) {
-    var fileName = require('path').relative(__dirname, event.path);
+    var fileName = require('path').relative(EXPRESS_ROOT, event.path);
     lr.changed({
         body: {
             files: [fileName]
