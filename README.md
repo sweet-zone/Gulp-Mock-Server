@@ -83,3 +83,42 @@ var PathConfig = {
 
 本项目主要对活动页这类比较简单的页面进行了轻量级的前后分离和构建, 由于gulp的方便性, 你也可以扩展自己需要的功能, 比如执行JSHint进行代码检查,总之任意配置达到自己的要求, 从繁杂的业务中抽离出来.
 如果对于其中的代码和插件感兴趣, 可直接查看直接源文件或者看[之前的这一篇](https://github.com/zjzhome/Rapid-Dev-Activity-Page/blob/master/doc.md).
+
+## 2015-11-27更新 增加对异步接口的支持
+
+之前结合FMPP只是解决了同步接口的问题, 那对于异步接口, 我们如何mock数据进行调试呢. 这里引入了优秀的express, 借助express强大的路由来实现前端模拟异步接口的功能.
+
+既然express已经提供服务器的功能, 我们就不再需要gulp-connect了, 自动刷新功能借助connect-livereload和tiny-lr. 具体代码见server以及server_demo下的gulpfile.
+
+你需要做的只是准备一份async.api.js, 里面根据你和后端约定的接口配置一份路由:
+
+```js
+module.exports = {
+    'get /rest/hh/:id': function(req, res) {
+        res.json({"id":req.params.id, "hello":"ws"})
+    },
+    'get /rest/other': function(req, res) {
+        res.json({"id":req.query.id, "hello":"23333"})
+    },
+    'post /rest/user': function(req, res) {
+        if(req.body.username.length > 0 && req.body.password.length > 0) {
+            res.json({"code":200, "message":"success"});
+        } else {
+            res.json({"code":400, "message":"参数错误"});
+        }
+    },
+    'get /rest/com': function(req, res) {
+        res.json({"com": "sd"});
+    }
+}
+```
+
+格式和[puer](http://leeluolee.github.io/2014/10/24/use-puer-helpus-developer-frontend/)一样.
+
+然后执行gulp, 爽快的开发吧.
+
+更多express路由的内容: [http://expressjs.com/4x/api.html](http://expressjs.com/4x/api.html)
+
+
+
+
