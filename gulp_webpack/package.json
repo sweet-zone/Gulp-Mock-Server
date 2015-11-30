@@ -1,0 +1,30 @@
+{
+  "name": "plushelper",
+  "version": "1.0.0",
+  "description": "plus helper",
+  "author": "zjzhome",
+  "private": true,
+  "devDependencies": {
+    "body-parser": "^1.14.1",
+    "connect-livereload": "^0.5.4",
+    "css-loader": "^0.23.0",
+    "express": "^4.13.3",
+    "gulp": "^3.9.0",
+    "gulp-clean": "^0.3.1",
+    "gulp-md5-plus": "^0.1.8",
+    "gulp-replace": "^0.5.4",
+    "gulp-util": "^3.0.7",
+    "gulp-watch": "^4.3.5",
+    "mcss": "^0.5.1",
+    "mcss-loader": "^0.1.1",
+    "rgl-loader": "^0.4.0",
+    "style-loader": "^0.13.0",
+    "tiny-lr": "^0.2.1",
+    "webpack": "^1.12.8",
+    "webpack-dev-server": "^1.12.1"
+  },
+  "dependencies": {
+    "qwest": "^2.2.3",
+    "regularjs": "^0.4.2"
+  }
+}
