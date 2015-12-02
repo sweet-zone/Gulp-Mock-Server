@@ -6,11 +6,13 @@
   "private": true,
   "devDependencies": {
     "body-parser": "^1.14.1",
+    "clean-css": "^3.4.8",
     "connect-livereload": "^0.5.4",
     "css-loader": "^0.23.0",
     "express": "^4.13.3",
     "gulp": "^3.9.0",
     "gulp-clean": "^0.3.1",
+    "gulp-mcs": "^0.1.1",
     "gulp-md5-plus": "^0.1.8",
     "gulp-replace": "^0.5.4",
     "gulp-util": "^3.0.7",
