@@ -5,11 +5,14 @@ var md5 = require('gulp-md5-plus');
 var replace = require('gulp-replace');
 var clean = require('gulp-clean');
 var watch = require('gulp-watch');
+var mcss = require('gulp-mcs');
+var CleanCSS = require('clean-css');
 var exec = require('child_process').exec;
 var webpack = require('webpack');
 var WebpackDevServer = require('webpack-dev-server');
 var webpackConfig = require('./webpack.config.js');
 var path = require('path');
+var fs = require('fs');
 var lr = require('tiny-lr')();
 
 var express = require('express');
@@ -36,6 +39,17 @@ gulp.task('fmpp', function() {
 })
 gulp.task('watchFmpp', function() {
 	gulp.watch(PathConfig.fmppSrc, ['fmpp']);
+})
+
+// mcss编译为css
+gulp.task('mcss', function() {
+	gulp.src(['./src/mcss/*.mcss', '!./src/mcss/common/*.mcss'])
+		.pipe(mcss())
+		.pipe(gulp.dest('./src/css'));
+})
+
+gulp.task('watchMcss', function() {
+	gulp.watch('./src/mcss/**/*.mcss', ['mcss']);
 })
 
 // webpack dev build
@@ -148,17 +162,21 @@ gulp.task('replace', ['clean:tpl'], function() {
 		.pipe(replace(/<script.+src="\/(dist)\/.+\.js".*><\/script>/g, function(s, dist) {
 			return s.replace(dist, 'pub');
 		}))
+		.pipe(replace(/<link.+href="(.+\.css)".*>/g, function(s, filename) {
+			var style = fs.readFileSync(__dirname + filename, 'utf-8');
+			return '<style>\n' + new CleanCSS().minify(style).styles + '\n</style>';
+		}))
 		.pipe(gulp.dest('./tpl'))
 });
 
 // md5 rev
-gulp.task('md5', function() {
+gulp.task('md5', ['replace'], function() {
 	gulp.src('./pub/**/*.js')
 		.pipe(md5(10, './tpl/**/*.ftl'))
 		.pipe(gulp.dest('./pub'))
 });
 
 // tasks
-gulp.task('default', ['fmpp', 'dev', 'server:express', 'watchFmpp']);
-gulp.task('build', ['webpack:build', 'replace']);
+gulp.task('default', ['fmpp', 'mcss', 'dev', 'server:express', 'watchFmpp', 'watchMcss']);
+gulp.task('build', ['webpack:build']);
 gulp.task('rev', ['md5']);
