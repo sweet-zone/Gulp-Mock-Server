@@ -18,7 +18,7 @@ var PathConfig = {
 }
 
 var EXPRESS_ROOT = __dirname;
-var EXPRESS_PORT = 8000;
+var EXPRESS_PORT = 9000;
 var APICONFIG = './async.api.js';
 var LIVEPORT = 35729;
 
@@ -54,7 +54,7 @@ function startExpress() {
 
    var apis = require(APICONFIG);
    for(var key in apis) {
-       var method = key.split(/\s+/)[0],
+       var method = key.split(/\s+/)[0].toLowerCase(),
            url = key.split(/\s+/)[1];
 
        app[method](url, apis[key]);

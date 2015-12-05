@@ -54,7 +54,7 @@ function startExpress() {
 
    var apis = require(APICONFIG);
    for(var key in apis) {
-       var method = key.split(/\s+/)[0],
+       var method = key.split(/\s+/)[0].toLowerCase(),
            url = key.split(/\s+/)[1];
 
        app[method](url, apis[key]);
