@@ -7,7 +7,7 @@ module.exports = {
         },
 
         server: {
-            root: __dirname,
+            root: __dirname,              // for gulp-connect, cant use './'
             port: 9000,
             apiconfig: 'async.api.js',    // where mock async api is, you just write filename
             livereloadSrc: ['./src/js/**/*.css', './src/css/**/*.css', 'dist/**/*.html']
@@ -22,6 +22,22 @@ module.exports = {
         mcss: {
             src: './src/mcss',
             dest: './src/css'
+        },
+
+        build: {
+            inline: {
+                src: './template/**/*.ftl',
+                dest: './tpl_inline',
+                liveInlineSrc: ['./template/**/*.ftl', './src/css/**/*.css', './src/js/**/*.js']
+            },
+            normal: {
+                src: './template/**/*.ftl',
+                dest: './tpl_normal',
+                pub: './pub_normal'
+            },
+            webpack: {
+
+            }
         }
 
     }
