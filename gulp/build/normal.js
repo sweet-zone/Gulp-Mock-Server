@@ -78,11 +78,11 @@ gulp.task('compress', function() {
     })
 })
 
+gulp.task('normal', gulpSequence('normal:clean', 'extract', 'compress'))
+
 gulp.task('normal:rev', function() {
     gulp.src(path.join(normal.pub, '/**/*.js'))
         .pipe(md5(10, path.join(normal.dest, '/**/*.ftl')))
         .pipe(gulp.dest(normal.pub))
 })
-
-gulp.task('normal', gulpSequence('normal:clean', 'extract', 'compress', 'normal:rev'))
 
