@@ -33,3 +33,4 @@ server/node_modules
 activity/log.fmpp
 normal/log.fmpp
 server/log.fmpp
+log.fmpp
