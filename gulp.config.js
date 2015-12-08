@@ -1,3 +1,6 @@
+
+var path = require('path')
+
 module.exports = {
 
     tasks: {
@@ -31,12 +34,14 @@ module.exports = {
                 liveInlineSrc: ['./template/**/*.ftl', './src/css/**/*.css', './src/js/**/*.js']
             },
             normal: {
-                src: './template/**/*.ftl',
+                src: path.join(__dirname, '/template'), // only folder name
                 dest: './tpl_normal',
                 pub: './pub_normal'
             },
             webpack: {
-
+                src: './template/**/*.ftl',
+                dest: './tpl_webpack',
+                pub: './pub_webpack'
             }
         }
 
