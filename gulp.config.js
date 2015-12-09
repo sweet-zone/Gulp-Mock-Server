@@ -13,7 +13,7 @@ module.exports = {
             root: __dirname,              // for gulp-connect, cant use './'
             port: 9000,
             apiconfig: 'async.api.js',    // where mock async api is, you just write filename
-            livereloadSrc: ['./src/js/**/*.css', './src/css/**/*.css', 'dist/**/*.html']
+            livereloadSrc: ['./src/js/**/*.js', './src/css/**/*.css', 'dist/**/*.html']
         },
 
         image: {

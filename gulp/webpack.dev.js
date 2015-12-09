@@ -18,5 +18,5 @@ gulp.task('webpack:dev', function() {
 })
 
 gulp.task('webpack', ['webpack:dev'], function() {
-    gulp.watch(['src/**/*'], ['webpack:dev'])
+    gulp.watch(['./src/**/*'], ['webpack:dev'])
 })
