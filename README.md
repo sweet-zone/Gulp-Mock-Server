@@ -119,6 +119,10 @@ module.exports = {
 
 更多express路由的内容: [http://expressjs.com/4x/api.html](http://expressjs.com/4x/api.html)
 
+## 2015-11-27更新 重构gulpfile.js
+
+查看dev分支
+
 
 
 
