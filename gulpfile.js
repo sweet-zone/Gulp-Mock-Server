@@ -94,7 +94,7 @@ gulp.task('server:express', () => {
 });
 
 gulp.task('fmpp:compile', () => {
-    return exec('fmpp', function(err, stdout, stderr) {
+    return exec('fmpp -C mock/config.fmpp', function(err, stdout, stderr) {
         if(stdout) console.log(stdout);
         if(stderr) console.log(stderr);
         if(err) console.log('exec error: ', err);
