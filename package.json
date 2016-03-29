@@ -1,0 +1,19 @@
+{
+  "name": "gulp-task",
+  "version": "1.0.0",
+  "description": "for work easy",
+  "author": "zjzhome",
+  "license": "MIT",
+  "devDependencies": {
+    "body-parser": "^1.15.0",
+    "connect-livereload": "^0.5.4",
+    "express": "^4.13.4",
+    "gulp": "^3.9.1",
+    "gulp-connect": "^3.2.2",
+    "gulp-iconfont": "^6.0.0",
+    "gulp-iconfont-css": "^2.1.0",
+    "gulp-mcs": "^0.1.1",
+    "gulp-watch": "^4.3.5",
+    "tiny-lr": "^0.2.1"
+  }
+}

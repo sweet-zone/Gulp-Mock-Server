@@ -1,5 +1,5 @@
-# Rapid-Dev-Activity-Page
-使用FMPP和Gulp快速构建前后端分离的自动化开发环境
+# Gulp-Mock-Server
+使用FMPP和Gulp快速构建前后端分离的开发环境
 
 ## 写在前面
 
@@ -14,18 +14,10 @@
 
 其实时间短对于活动页来说并不是问题, 对于这样的页面, 一刀切, 静态页面分分钟写好, 可以写好后如何调试呢. 比如我们需要根据用户手机号的运营商来输出不同的内容, 这时候难道要不停的改变HTML结构来判断输出么. 直接写成Freemarker模板, 可是我们又没有后端提供的数据和环境, 只能干等..这时候如果有这样的一套环境:
 - 根据mock数据和我们编写的模板输出html文件.
-- 开启静态服务器调试
-- 大图的压缩
+- 开启服务器调试, 服务器具有输出接口的能力
+- css预处理, 字体图标制作
 - 当测试设备过多时, 在文件改动时能够自动刷新以方便查看页面.
 这样, 我们就可以不必依赖后端的环境和数据, 在约定接口后各自开发, 直到联调. 除非有接口变动, 基本不会出错. bug率大大降低. 可以腾出更多的时间和大家交(shui)流(qun)技(dou)术(meizi).
-
-## 项目目录说明
-
-本项目主要包含了三类页面的工作流程, 分别对应三个文件夹:
-
-* **activity**, 为极简的活动页定制, 编译FTL, 资源内联, 开启静态服务器, 自动刷新等等. 示例在acticity_demo下.
-* **normal**, 对于资源稍微多一些的页面可能资源缓存更合理, 不再内联, 而是合并压缩更改引用. 示例在normal_demo下. 如果你的页面使用了模块化, 这个方案就不再适用, 推荐第三种.
-* **server**, 抽取了其中的FTL编译, 静态服务器, MCSS编译为CSS, 自动刷新的部分, 对于资源的打包工作交给你所使用的模块工具.(nej-build, r.js等等..)
 
 ## 我该如何使用
 
@@ -59,18 +51,16 @@ data:tdd(../mock/index.tdd)     // 数据文件, 路径相对于sourceRoot
 
 ### How I Use
 
-* 根据自己的项目页面, 选择activity, normal或者server, 将文件夹下的`package.json`, `gulpfile.js`以及`config.fmpp`, 根据自己的项目做修改.
-
 比如gulpfile.js下, 你需要修改的是各个task对应的目录.
-```
-var PathConfig = {
-  ftlSrc: './src/index.ftl',  // Freemarker模板
-  inlineDist: './template/',  // 内联js, css后生成的模板的所在目录
-  imageSrc: './img/',         // 图片目录
-  livereloadSrc: ['./js/index.js', './css/index.css', './dist/index.html'], // 自动刷新监听文件/目录
-  liveInlineSrc: ['./src/index.ftl', './js/*.js', './css/*css'],    // 自动内联监听文件/目录
-  fmppSrc: ['./src/index.ftl', './mock/index.json'],                 // 自动执行fmpp监听文件/目录
-  lintSrc: './js/*.js'        // jshint检查文件目录
+```js
+// Path Setting
+let PathConfig = {
+    mcssSrc: ['./src/mcss/**/*', '!./src/mcss/common/*.mcss'],
+    cssDist: './src/css/',
+    livereloadSrc: ['./src/js/*.js', './src/css/*.css', './dist/*.html'], 
+    fmppSrc: ['./template/index.ftl', './mock/index.tdd', './mock/foo.json'],
+    svgSrc: './src/svg/*.svg',
+    fontDist: './src/fonts/'                  
 }
 ```
 
@@ -82,7 +72,6 @@ var PathConfig = {
 ## 写在后面
 
 本项目主要对活动页这类比较简单的页面进行了轻量级的前后分离和构建, 由于gulp的方便性, 你也可以扩展自己需要的功能, 比如执行JSHint进行代码检查,总之任意配置达到自己的要求, 从繁杂的业务中抽离出来.
-如果对于其中的代码和插件感兴趣, 可直接查看直接源文件或者看[之前的这一篇](https://github.com/zjzhome/Rapid-Dev-Activity-Page/blob/master/doc.md).
 
 ## 2015-11-27更新 增加对异步接口的支持
 
@@ -122,6 +111,10 @@ module.exports = {
 ## 2015-11-27更新 重构gulpfile.js
 
 查看dev分支
+
+## 2016-03-29更新 
+
+生日当天...重写...改仓库名字
 
 
 

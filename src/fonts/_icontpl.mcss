@@ -1,0 +1,31 @@
+@font-face {
+    font-family: "<%= fontName %>";
+    src: url('<%= fontPath %><%= fontName %>.eot');
+    src: url('<%= fontPath %><%= fontName %>.eot?#iefix') format('eot'),
+        url('<%= fontPath %><%= fontName %>.woff2') format('woff2'),
+        url('<%= fontPath %><%= fontName %>.woff') format('woff'),
+        url('<%= fontPath %><%= fontName %>.ttf') format('truetype'),
+        url('<%= fontPath %><%= fontName %>.svg#<%= fontName %>') format('svg');
+}
+
+.<%= cssClass %>:before {
+    display: inline-block;
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: "<%= fontName %>" !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    /* speak: none; only necessary if not using the private unicode range (firstGlyph option) */
+    text-decoration: none;
+    text-transform: none;
+}
+
+<% _.each(glyphs, function(glyph) { %>
+.<%= cssClass %>-<%= glyph.fileName %>:before {
+    content: "\<%= glyph.codePoint %>";
+}
+<% }); %>

@@ -1,0 +1,37 @@
+@import "./common/reset.mcss";
+
+.app {
+    min-height: 100%;
+    position: relative;
+    text-align: center;
+    color: #111;
+
+    .tip {
+        margin: 20px 20px;
+        border: 1px solid #ebebeb;
+    }
+
+    .btn {
+        display: inline-block;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        width: 140px;
+        height: 40px;
+        border: none;
+        border-radius: 6px;
+        background: #F6870C;
+        color: #fff;
+        line-height: 24px;
+        text-align: center;
+        font-size: 16px;
+        -webkit-appearance: none;
+        outline: none;
+    }
+
+    .icons {
+        margin-top: 20px;
+        font-size: 22px;
+        color: #000;
+    }
+}
+
