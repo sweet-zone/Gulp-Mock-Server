@@ -5,6 +5,7 @@ let gulp = require('gulp');
 let connect = require('gulp-connect');
 let watch = require('gulp-watch');
 let mcss = require('gulp-mcs');
+let nodemon = require('gulp-nodemon');
 let lr = require('tiny-lr')();
 let exec = require('child_process').exec;
 let iconfont = require('gulp-iconfont');
@@ -88,7 +89,12 @@ function notifyLivereload(event) {
 }
 
 gulp.task('server:express', () => {
-    startExpress();
+    nodemon({
+        script: './server.js',
+        ignore: ['node_modules/', 'src/', 'dist/', 'gulpfile.js']
+    }).on('restart', function() {
+        console.log('server restarted...');
+    });
     startLivereload();
     gulp.watch(PathConfig.livereloadSrc, notifyLivereload);
 });

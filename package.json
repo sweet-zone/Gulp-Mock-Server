@@ -13,6 +13,7 @@
     "gulp-iconfont": "^6.0.0",
     "gulp-iconfont-css": "^2.1.0",
     "gulp-mcs": "^0.1.1",
+    "gulp-nodemon": "^2.0.6",
     "gulp-watch": "^4.3.5",
     "tiny-lr": "^0.2.1"
   }
