@@ -19,7 +19,7 @@ let PathConfig = {
     mcssSrc: ['./src/mcss/**/*', '!./src/mcss/common/*.mcss'],
     cssDist: './src/css/',
     livereloadSrc: ['./src/js/*.js', './src/css/*.css', './dist/*.html'], 
-    fmppSrc: ['./template/index.ftl', './mock/index.tdd', './mock/foo.json'],
+    fmppSrc: ['./template/index.ftl', './mock/index.tdd', './mock/foo.json', './mock/config.fmpp'],
     svgSrc: './src/svg/*.svg',
     fontDist: './src/fonts/'                  
 }
