@@ -14,65 +14,19 @@ Web开发是一个前后端合作的工作，但在开发的前期，双方约�
 
 这样, 我们就可以不必依赖后端的环境和数据, 在约定接口后各自开发, 直到联调. 除非有接口变动, 基本不会出错. bug率大大降低. 可以腾出更多的时间和大家交(shui)流(qun)技(dou)术(meizi).
 
-## 我该如何使用
+### 后端模板支持 - FMPP
 
-### 先介绍一下FMPP
 [FMPP - FreeMarker-based file PreProcessor](http://fmpp.sourceforge.net/), 基于Freemarker的文件预处理器, 就像我们用的CSS预处理器一样. 通过他拜托后端环境的束缚. 总的来说: HTML = FTL + DATA. FMPP就是通过数据和模板生成html文件, 和后端渲染输出是一个道理.
 
-使用也很简单(如果不考虑那一堆的配置项)
-* 准备的你的模板文件
-* 准备配置文件**config.fmpp**, 虽然可以命令行带参数, 但谁也不想那么费劲.
+FMPP官网地址: [http://fmpp.sourceforge.net/manual.html](http://fmpp.sourceforge.net/manual.html).
 
-```
-sourceRoot: src                 // ftl目录
-sources: index.ftl              // 需要编译为html的文件, 如果没有此项配置, 那么sourceRoot下的所有ftl都将被编译
-outputRoot: dist                // 输出目录
-logFile: log.fmpp               // 日志打印目录, 可查看出错信息
-modes: [execute(*.ftl)]         // 对sourceRoot下的ftl文件进行操作
-replaceExtensions:[ftl,html]    // 编译后后缀改为html
-data:tdd(../mock/index.tdd)     // 数据文件, 路径相对于sourceRoot
-```
+不过有一点比较不好, FMPP并没有做模板和数据一一对应的工作, 所以只能自己实现. 使用时需要做的是将模板的文件名和数据的文件名一一对应即可, 比如`/template/index.ftl`对应`/mock/index.tdd`, `/template/sub/sub.ftl`对应`/mock/sub/sub.tdd`. 暂时只支持tdd后缀的数据, 确保一个文件对应一个数据.
 
-* 准备数据文件
-也就是配置文件中最后一项data, 我们看到上文中数据以tdd包裹, 这应该是FMPP自己的一种格式, 当然也可以使用json, 就是类似这样: `data: { user: json(../mock/index.json') }`. 两者类似但又有点不同. 比如两者同样是下面的数据:
-```json
-{
-  "id": 1
-}
-```
-如果是tdd的, id可以直接在模板中用${id}中获得, 但是如果json格式, fmpp会报错, 提示hash没有key, 所以就需要像`data: { user: json(../mock/index.json') }`使用, 在页面中${user.id}使用, 在activity和normal两个demo里可以看到不同的数据格式.
+注: 不过需要麻烦一点就是需要自己下载fmpp, 并将其bin目录加入系统环境变量.
 
-更多配置参考官网: [http://fmpp.sourceforge.net/manual.html](http://fmpp.sourceforge.net/manual.html)
-
-### How I Use
-
-比如gulpfile.js下, 你需要修改的是各个task对应的目录.
-```js
-// Path Setting
-let PathConfig = {
-    mcssSrc: ['./src/mcss/**/*', '!./src/mcss/common/*.mcss'],
-    cssDist: './src/css/',
-    livereloadSrc: ['./src/js/*.js', './src/css/*.css', './dist/*.html'], 
-    fmppSrc: ['./template/index.ftl', './mock/index.tdd', './mock/foo.json'],
-    svgSrc: './src/svg/*.svg',
-    fontDist: './src/fonts/'                  
-}
-```
-
-这里有一些建议, 以为gulp是资瓷通配符的, 所以强烈建议统一功能或页面的模板或者资源有自己的文件夹, 然后配置里都用通配符识别即可, 比如`ftlSrc: './src/*ftl'`, 同时, 对于activity和normal中, 因为最后template中的模板是经过资源内联或者引用替换的, 强烈建议建立一个类似src的目录开发. 而server下则不用关心.
-
-* 根据约定的接口准备mock数据即可
-* 命令行下gulp或者gulp+task运行即可.
-
-## 写在后面
-
-本项目主要对活动页这类比较简单的页面进行了轻量级的前后分离和构建, 由于gulp的方便性, 你也可以扩展自己需要的功能, 比如执行JSHint进行代码检查,总之任意配置达到自己的要求, 从繁杂的业务中抽离出来.
-
-## 2015-11-27更新 增加对异步接口的支持
+### 异步接口支持
 
 之前结合FMPP只是解决了同步接口的问题, 那对于异步接口, 我们如何mock数据进行调试呢. 这里引入了优秀的express, 借助express强大的路由来实现前端模拟异步接口的功能.
-
-既然express已经提供服务器的功能, 我们就不再需要gulp-connect了, 自动刷新功能借助connect-livereload和tiny-lr. 具体代码见server以及server_demo下的gulpfile.
 
 你需要做的只是准备一份async.api.js, 里面根据你和后端约定的接口配置一份路由:
 
@@ -90,24 +44,38 @@ module.exports = {
         } else {
             res.json({"code":400, "message":"参数错误"});
         }
-    },
-    'get /rest/com': function(req, res) {
-        res.json({"com": "sd"});
     }
 }
 ```
 
 格式和[puer](http://leeluolee.github.io/2014/10/24/use-puer-helpus-developer-frontend/)一样.
 
-然后执行gulp, 爽快的开发吧.
+*而且引入了gulp-nodemon插件, 在你修改了异步接口后, 不必重启gulp, 服务器会自动重启!*
+
+另外gulpfile.js里还是保留了gulp-connect的静态服务器, 如果仅是静态页面要求, 使用这个就很不错!
 
 更多express路由的内容: [http://expressjs.com/4x/api.html](http://expressjs.com/4x/api.html)
 
+### 其他gulp任务
+
+只需引入插件, css编译, 字体图标处理, 静态代码检查以及其他你想做的!
+
+### 如果你也想这么做
+
+* 安装node 4+, 全局安装gulp
+* npm install
+* 根据自己的目录修改gulpfile里的相关配置
+* 根据约定的接口准备mock数据
+* 命令行下gulp或者gulp+task运行
+
+
 ## changelog
+
+### 2015-11-27更新 增加对异步接口的支持
 
 ### 2015-11-27更新 重构gulpfile.js
 
-查看dev分支
+查看dev分支(废弃)
 
 ### 2016-03-29更新 
 
