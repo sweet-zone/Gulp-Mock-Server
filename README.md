@@ -28,15 +28,12 @@ FMPP官网地址: [http://fmpp.sourceforge.net/manual.html](http://fmpp.sourcefo
 
 之前结合FMPP只是解决了同步接口的问题, 那对于异步接口, 我们如何mock数据进行调试呢. 这里引入了优秀的express, 借助express强大的路由来实现前端模拟异步接口的功能.
 
-你需要做的只是准备一份async.api.js, 里面根据你和后端约定的接口配置一份路由:
+你需要做的只是在/mock/async/内增加接口文件, 里面根据你和后端约定的接口配置一份路由:
 
 ```js
 module.exports = {
     'get /rest/hh/:id': function(req, res) {
         res.json({"id":req.params.id, "hello":"ws"})
-    },
-    'get /rest/other': function(req, res) {
-        res.json({"id":req.query.id, "hello":"23333"})
     },
     'post /rest/user': function(req, res) {
         if(req.body.username.length > 0 && req.body.password.length > 0) {
@@ -50,7 +47,7 @@ module.exports = {
 
 格式和[puer](http://leeluolee.github.io/2014/10/24/use-puer-helpus-developer-frontend/)一样.
 
-*而且引入了gulp-nodemon插件, 在你修改了异步接口后, 不必重启gulp, 服务器会自动重启!*
+**而且引入了gulp-nodemon插件, 在你修改了异步接口后, 不必重启gulp, 服务器会自动重启!**
 
 另外gulpfile.js里还是保留了gulp-connect的静态服务器, 如果仅是静态页面要求, 使用这个就很不错!
 
