@@ -112,13 +112,15 @@ gulp.task('server:express', () => {
 // 之后watch改变的文件
 gulp.task('fmpp:compile', () => {
     travelDir('./template', function(pathname) {
-        let file = pathname.slice(9).slice(0, -4).replace('\\', '/');
-        execFmpp(file);
+        if(path.extname(pathname) === '.ftl') {
+            let file = pathname.slice(9).slice(0, -4).replace('\\', '/');
+            execFmpp(file);
+        }
     });
 });
 
 gulp.task('fmpp', ['fmpp:compile'], () => {
-    gulp.watch(['./template/**/*', './mock/**/*.tdd'], function(event) {
+    gulp.watch(PathConfig.fmppSrc, function(event) {
         let pathname = event.path;
         if(pathname.indexOf('mock') > 0) {
             let index = pathname.indexOf('mock');
@@ -163,13 +165,25 @@ gulp.task('iconfont', () => {
 
 function execFmpp(src) {
     console.log(chalk.blue('------- fmpp compiling ' + src + '.ftl -------'))
-    let args = 'fmpp template/' + src + '.ftl -o dist/' + src + '.html -D tdd(../mock/' + src + '.tdd) -S template';
-    exec(args, function(err, stdout, stderr) {
-        if(stdout) {
-            console.log(chalk.green('------- fmpp compile ' + src + '.ftl success -------'))
+    let mockdata = './mock/' + src + '.tdd';
+    let args = '';
+
+    // 如果对应的data存在并且可读, 使用-D
+    // 否则不使用-D
+    fs.access(mockdata, fs.F_OK | fs.R_OK, (err) => {
+        let args = '';
+        if(err) {
+            args = 'fmpp template/' + src + '.ftl -o dist/' + src + '.html -S template -s';
+        } else {
+            args = 'fmpp template/' + src + '.ftl -o dist/' + src + '.html -D tdd(../mock/' + src + '.tdd) -S template -s';
         }
-        if(stderr) console.log(chalk.red(stderr));
-        if(err) console.log(chalk.red('exec error: ', err));
+        exec(args, function(err, stdout, stderr) {
+            if(stdout) {
+                console.log(chalk.yellow('------- fmpp compiled ' + src + '.ftl ended-------'))
+                console.log(chalk.green(stdout))
+            }
+            if(err) console.log(chalk.red('exec error: ', err));
+        });
     });
 } 
 
@@ -177,7 +191,7 @@ function travelDir(dir, callback) {
     fs.readdirSync(dir).forEach(function (file) {
         let pathname = path.join(dir, file);
 
-        if (fs.statSync(pathname).isDirectory()) {
+        if (fs.statSync(pathname).isDirectory() && pathname.indexOf('common') < 0) {
             travelDir(pathname, callback);
         } else {
             callback(pathname);
