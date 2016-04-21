@@ -1,0 +1,10 @@
+{
+    "id": 1,
+    "other": {
+        "name": "<p>zjzhome</p>",
+        "gender": "male",
+        "age": 27,
+        "address": "Hangzhou",
+        "type": 3
+    }
+}

@@ -1,17 +1,20 @@
 
 'use strict';
 
-let gulp = require('gulp');
-let connect = require('gulp-connect');
-let watch = require('gulp-watch');
-let mcss = require('gulp-mcs');
-let nodemon = require('gulp-nodemon');
-let lr = require('tiny-lr')();
-let exec = require('child_process').exec;
-let iconfont = require('gulp-iconfont');
-let iconfontCss = require('gulp-iconfont-css');
+const gulp = require('gulp');
+const connect = require('gulp-connect');
+const watch = require('gulp-watch');
+const mcss = require('gulp-mcs');
+const nodemon = require('gulp-nodemon');
+const lr = require('tiny-lr')();
+const exec = require('child_process').exec;
+const iconfont = require('gulp-iconfont');
+const iconfontCss = require('gulp-iconfont-css');
+const fs = require('fs');
+const path = require('path');
+const chalk = require('chalk');
 
-let express = require('express');
+const express = require('express');
 let app = express();
 
 // Path Setting
@@ -19,7 +22,7 @@ let PathConfig = {
     mcssSrc: ['./src/mcss/**/*', '!./src/mcss/common/*.mcss'],
     cssDist: './src/css/',
     livereloadSrc: ['./src/js/*.js', './src/css/*.css', './dist/*.html'], 
-    fmppSrc: ['./template/index.ftl', './mock/index.tdd', './mock/foo.json', './mock/config.fmpp'],
+    fmppSrc: ['./template/**/*.ftl', './mock/**/*.tdd'],
     svgSrc: './src/svg/*.svg',
     fontDist: './src/fonts/'                  
 }
@@ -52,7 +55,10 @@ gulp.task('livereload:connect', () => {
         .pipe(connect.reload())
 });
 
-// express服务器
+
+
+
+// -------- express服务器 ----------------
 function startExpress() {
     let bodyParser = require('body-parser');
     app.use(require('connect-livereload')());
@@ -99,15 +105,30 @@ gulp.task('server:express', () => {
     gulp.watch(PathConfig.livereloadSrc, notifyLivereload);
 });
 
+
+
+// fmpp编译freemarker
+// 第一次会把template下的ftl全部编译
+// 之后watch改变的文件
 gulp.task('fmpp:compile', () => {
-    return exec('fmpp -C mock/config.fmpp', function(err, stdout, stderr) {
-        if(stdout) console.log(stdout);
-        if(stderr) console.log(stderr);
-        if(err) console.log('exec error: ', err);
+    travelDir('./template', function(pathname) {
+        let file = pathname.slice(9).slice(0, -4).replace('\\', '/');
+        execFmpp(file);
     });
 });
+
 gulp.task('fmpp', ['fmpp:compile'], () => {
-    gulp.watch(PathConfig.fmppSrc, ['fmpp:compile']);
+    gulp.watch(['./template/**/*', './mock/**/*.tdd'], function(event) {
+        let pathname = event.path;
+        if(pathname.indexOf('mock') > 0) {
+            let index = pathname.indexOf('mock');
+            pathname = pathname.slice(index + 5, -4);
+        } else if(pathname.indexOf('template') > 0) {
+            let index = pathname.indexOf('template');
+            pathname = pathname.slice(index + 9, -4);
+        }
+        execFmpp(pathname);
+    });
 });
 
 gulp.task('mcss:compile', () => {
@@ -139,6 +160,30 @@ gulp.task('iconfont', () => {
         }))
         .pipe(gulp.dest(PathConfig.fontDist));
 });
+
+function execFmpp(src) {
+    console.log(chalk.blue('------- fmpp compiling ' + src + '.ftl -------'))
+    let args = 'fmpp template/' + src + '.ftl -o dist/' + src + '.html -D tdd(../mock/' + src + '.tdd) -S template';
+    exec(args, function(err, stdout, stderr) {
+        if(stdout) {
+            console.log(chalk.green('------- fmpp compile ' + src + '.ftl success -------'))
+        }
+        if(stderr) console.log(chalk.red(stderr));
+        if(err) console.log(chalk.red('exec error: ', err));
+    });
+} 
+
+function travelDir(dir, callback) {
+    fs.readdirSync(dir).forEach(function (file) {
+        let pathname = path.join(dir, file);
+
+        if (fs.statSync(pathname).isDirectory()) {
+            travelDir(pathname, callback);
+        } else {
+            callback(pathname);
+        }
+    });
+}
 
 //默认启动
 gulp.task('default', ['mcss', 'fmpp', 'server:express']);
