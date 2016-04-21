@@ -17,18 +17,7 @@
 <#escape x as x?html>
 <body>
     <div class="app" id="app">
-        <ul class="list">
-            <li>姓名: ${user.name}</li>
-            <li>性别: ${user.gender}</li>
-            <li>年龄: ${user.age}</li>
-            <li>地址: ${user.address}</li>
-        </ul>
-
-        <@tpl type=user.type />
-
-        <div>
-            <button type="button" class="btn">点我点我点我</button>
-        </div>
+    ${id}
     </div>
 
     <script src="/js/zepto.js"></script>

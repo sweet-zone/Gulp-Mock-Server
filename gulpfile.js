@@ -22,7 +22,7 @@ let PathConfig = {
     mcssSrc: ['./src/mcss/**/*', '!./src/mcss/common/*.mcss'],
     cssDist: './src/css/',
     livereloadSrc: ['./src/js/*.js', './src/css/*.css', './dist/*.html'], 
-    fmppSrc: ['./template/**/*.ftl', './mock/**/*.tdd'],
+    fmppSrc: ['./template/**/*.ftl', './mock/sync/**/*.tdd'],
     svgSrc: './src/svg/*.svg',
     fontDist: './src/fonts/'                  
 }
@@ -32,7 +32,7 @@ let runTimestamp = Math.round(Date.now()/1000);
 // express server setting
 const EXPRESS_ROOT = __dirname;
 const EXPRESS_PORT = 9000;
-const APICONFIG = './mock/async.api.js';
+const APICONFIG = './mock/async/';
 const LIVEPORT = 35729;
 
 // iconfont setting
@@ -165,7 +165,7 @@ gulp.task('iconfont', () => {
 
 function execFmpp(src) {
     console.log(chalk.blue('------- fmpp compiling ' + src + '.ftl -------'))
-    let mockdata = './mock/' + src + '.tdd';
+    let mockdata = './mock/sync/' + src + '.tdd';
     let args = '';
 
     // 如果对应的data存在并且可读, 使用-D
@@ -175,7 +175,7 @@ function execFmpp(src) {
         if(err) {
             args = 'fmpp template/' + src + '.ftl -o dist/' + src + '.html -S template -s';
         } else {
-            args = 'fmpp template/' + src + '.ftl -o dist/' + src + '.html -D tdd(../mock/' + src + '.tdd) -S template -s';
+            args = 'fmpp template/' + src + '.ftl -o dist/' + src + '.html -D tdd(../mock/sync/' + src + '.tdd) -S template -s';
         }
         exec(args, function(err, stdout, stderr) {
             if(stdout) {
