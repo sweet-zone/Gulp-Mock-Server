@@ -103,17 +103,23 @@ module.exports = {
 
 更多express路由的内容: [http://expressjs.com/4x/api.html](http://expressjs.com/4x/api.html)
 
-## 2015-11-27更新 重构gulpfile.js
+## changelog
+
+### 2015-11-27更新 重构gulpfile.js
 
 查看dev分支
 
-## 2016-03-29更新 
+### 2016-03-29更新 
 
 生日当天...重写...改仓库名字
 
-## 2016-04-08更新
+### 2016-04-08更新
 
 引入gulp-nodemon插件, 当异步接口改变时, 不必重启gulp.
+
+### 2016-04-21更新
+
+将freemarker模板和数据一一对应备受吐槽,  去掉config.fmpp, 直接使用命令行. 使用时需要做的是将模板的文件名和数据的文件名一一对应即可, 比如`/template/index.ftl`对应`/mock/index.tdd`, `/template/sub/sub.ftl`对应`/mock/sub/sub.tdd`.
 
 
 
