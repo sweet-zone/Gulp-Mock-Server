@@ -19,7 +19,7 @@ let app = express();
 
 // Path Setting
 let PathConfig = {
-    mcssSrc: ['./src/mcss/**/*', '!./src/mcss/common/*.mcss'],
+    mcssSrc: ['./src/mcss/**/*.mcss', '!./src/mcss/common/*.mcss'],
     cssDist: './src/css/',
     livereloadSrc: ['./src/js/*.js', './src/css/*.css', './dist/*.html'], 
     fmppSrc: ['./template/**/*.ftl', './mock/sync/**/*.tdd'],
