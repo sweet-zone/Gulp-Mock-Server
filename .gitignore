@@ -28,3 +28,6 @@ node_modules
 
 # fmpp log
 log.fmpp
+
+#
+mock/upload/*

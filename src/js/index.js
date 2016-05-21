@@ -52,5 +52,4 @@
 			console.log(result)
 		}
 	})
-
 })();

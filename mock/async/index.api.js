@@ -8,5 +8,16 @@ module.exports = {
         } else {
             res.json({"code":400, "message":"参数错误"});
         }
+    },
+    'post /api/contact/import/ file': function(req, res) {
+        console.log(req.file);
+        console.log('upload over!');
+        res.json({
+            code: 200,
+            msg: 'success',
+            result: {
+                id: 'as6s121'
+            }
+        });
     }
 }

@@ -5,6 +5,8 @@ const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
 const express = require('express');
+const multer  = require('multer');
+const upload = multer({ dest: './mock/uploads/' });
 let app = express();
 
 // express server setting
@@ -25,10 +27,16 @@ function startExpress() {
         let pathname = path.join(APICONFIG, file);
         let apis = require('./' + pathname);
         for(let key in apis) {
-           let method = key.split(/\s+/)[0].toLowerCase(),
-               url = key.split(/\s+/)[1];
 
-           app[method](url, apis[key]);
+            let route = key.split(/\s+/);
+            let method = route[0].toLowerCase();
+            let url = route[1];
+            let form = route[2];
+            if(form) {
+                app[method](url, upload.single(form), apis[key]);
+            } else {
+                app[method](url, apis[key]);
+            }
         }
     });
 

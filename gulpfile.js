@@ -101,14 +101,17 @@ gulp.task('fmpp:compile', () => {
 gulp.task('fmpp', ['fmpp:compile'], () => {
     gulp.watch(PathConfig.fmppSrc, function(event) {
         let pathname = event.path;
-        if(pathname.indexOf('mock') > 0) {
-            let index = pathname.indexOf('mock');
-            pathname = pathname.slice(index + 5, -4);
-        } else if(pathname.indexOf('template') > 0) {
-            let index = pathname.indexOf('template');
-            pathname = pathname.slice(index + 9, -4);
+        // common下的ftl不编译
+        if(path.dirname(pathname).indexOf('common') < 0) {
+            if(pathname.indexOf('.tdd') > 0) {
+                let index = pathname.indexOf('sync');
+                pathname = pathname.slice(index + 5, -4);
+            } else if(pathname.indexOf('.ftl') > 0) {
+                let index = pathname.indexOf('template');
+                pathname = pathname.slice(index + 9, -4);
+            }
+            execFmpp(pathname);
         }
-        execFmpp(pathname);
     });
 });
 
