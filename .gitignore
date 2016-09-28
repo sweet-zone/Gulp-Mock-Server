@@ -29,5 +29,10 @@ node_modules
 # fmpp log
 log.fmpp
 
-#
-mock/upload/*
+# 测试代码目录
+_dist
+_mock
+src
+res
+template
+test.js
