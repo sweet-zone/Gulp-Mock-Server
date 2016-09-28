@@ -11,6 +11,7 @@ const nodemon = require('gulp-nodemon');
 const lr = require('tiny-lr')();
 const iconfont = require('gulp-iconfont');
 const iconfontCss = require('gulp-iconfont-css');
+const gulpSequence = require('gulp-sequence').use(gulp);
 const logger = require('./_gms/logger.js');
 const _ = require('./_gms/util.js');
 const express = require('express');
@@ -120,4 +121,4 @@ gulp.task('iconfont', () => {
 
 
 // All gulp tasks
-gulp.task('default', ['mcss', 'fmpp', 'server']);
+gulp.task('default', gulpSequence('mcss', 'fmpp', 'server'));

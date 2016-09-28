@@ -15,6 +15,7 @@
     "gulp-iconfont-css": "^2.1.0",
     "gulp-mcs": "^0.2.0",
     "gulp-nodemon": "^2.0.6",
+    "gulp-sequence": "^0.4.6",
     "gulp-watch": "^4.3.5",
     "mkdirp": "^0.5.1",
     "multer": "^1.1.0",
