@@ -17,9 +17,10 @@ const express = require('express');
 let app = express();
 
 let allfms = config.allfms.slice();
-allfms.map(function(af) {
+allfms = allfms.map(function(af) {
     return path.join(config.fmSrc, af);
 });
+
 
 let runTimestamp = Math.round(Date.now()/1000);
 
@@ -27,6 +28,9 @@ let runTimestamp = Math.round(Date.now()/1000);
 gulp.task('init', () => {
     _.mkdirs();
 });
+
+
+
 
 // -------- 服务器 ----------------
 // nodemon 自动重启
@@ -66,9 +70,14 @@ gulp.task('fmpp:compile', () => {
 });
 
 gulp.task('fmpp', ['fmpp:compile'], () => {
-    gulp.watch(allfms, (event) => {
+    gulp.watch(allfms.concat(_.handleUrlPath(config.syncPath) + '/**/*.tdd'), (event) => {
         let pathname = event.path;
-        // TODO
+        let ext = path.extname(pathname);
+        pathname = ext === '.tdd' ? path.relative(config.syncPath, pathname) : path.relative(config.fmSrc, pathname);
+        pathname = _.handleFilePath(pathname);
+        _.execFmpp(pathname, function(err) {
+            if(err) logger.warning(err);
+        });
     });
 });
 

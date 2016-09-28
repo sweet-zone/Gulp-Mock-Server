@@ -35,7 +35,8 @@ _.handleUrlPath = function(str) {
 }
 
 _.handleFilePath = function(str) {
-    let basename = path.basename(str, '.ftl');
+    let extname = path.extname(str);
+    let basename = path.basename(str, extname);
     let dirname = path.dirname(str);
     return path.join(dirname, basename);
 }
