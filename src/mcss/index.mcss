@@ -1,4 +1,0 @@
-@import "./_reset.mcss";
-
-h1 { color: #000; }
-h2 { color: #111; }
