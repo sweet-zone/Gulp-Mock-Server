@@ -43,7 +43,7 @@ gulp.task('server', () => {
         logger.info('\n server restarted.. ');
     });
     startLivereload();
-    gulp.watch(config.server.livereload, notifyLivereload);
+    gulp.watch(config.server.livereload.concat(_.handleUrlPath(config.distPath) + '/**/*.html'), notifyLivereload);
 });
 
 function startLivereload() {
