@@ -92,7 +92,7 @@ gulp.task('mcss:compile', () => {
 });
 
 gulp.task('mcss', ['mcss:compile'], () => {
-    gulp.watch(mcssSrc + '**/*.mcss', ['mcss:compile']);
+    gulp.watch(mcssSrc + '/**/*.mcss', ['mcss:compile']);
 });
 
 // -------- iconfont -----------------------

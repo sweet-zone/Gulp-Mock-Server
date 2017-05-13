@@ -56,7 +56,7 @@ _.execFmpp = function(src, callback) {
         if(err) {
             args += ' -s';
         } else {
-            args += ' -D tdd(' + fmmockfile + ') -s --data-root=' + config.mockPath;
+            args += ' -D "tdd(' + fmmockfile + ')" -s --data-root=' + config.mockPath;
         }
 
         exec(args, (err, stdout, stderr) => {
