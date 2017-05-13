@@ -102,7 +102,7 @@ gulp
 
 运行效果大致如图：
 
-![gms](https://github.com/zjzhome/Gulp-Mock-Server/raw/master/screenshot/gms.jpg)
+![gms](https://raw.githubusercontent.com/zjzhome/Gulp-Mock-Server/master/screenshot/gms.jpg)
 
 
 ## 总结
