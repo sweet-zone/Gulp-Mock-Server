@@ -39,7 +39,7 @@ gulp.task('init', () => {
 gulp.task('server', () => {
     nodemon({
         script: './_gms/server.js',
-        ignore: ['node_modules/', 'src/', 'dist/', 'gulpfile.js']
+        watch: [config.asyncPath]
     }).on('restart', function() {
         logger.info('\n server restarted.. ');
     });
