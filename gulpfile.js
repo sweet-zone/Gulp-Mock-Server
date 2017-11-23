@@ -7,6 +7,8 @@ const path = require('path');
 const gulp = require('gulp');
 const watch = require('gulp-watch');
 const mcss = require('gulp-mcs');
+const postcss = require('gulp-postcss');
+const autoprefixer = require('autoprefixer');
 const nodemon = require('gulp-nodemon');
 const lr = require('tiny-lr')();
 const iconfont = require('gulp-iconfont');
@@ -88,6 +90,9 @@ let mcssSrc = _.handleUrlPath(config.style.src);
 gulp.task('mcss:compile', () => {
     return gulp.src([ mcssSrc + '/**/*.mcss', '!' + mcssSrc + '/**/_*.mcss' ])
         .pipe(mcss())
+        .pipe(postcss([
+            autoprefixer({browsers: ['> 1%', 'last 2 versions']})
+        ]))
         .pipe(gulp.dest(config.style.dist));
 });
 
